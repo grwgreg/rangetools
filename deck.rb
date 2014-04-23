@@ -27,3 +27,4 @@ class Deck
     @cards.shuffle!
   end
 end
+#dont even need this deck object for range app... save for later
