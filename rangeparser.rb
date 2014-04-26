@@ -19,19 +19,15 @@ class RangeParser
 =end
 
   def expandRangeTags(rangeString)
-    tags = []
     rangeTags = rangeString.split(',')
     rangeTags.each do |rangeTag|
       rangeTag.strip!
       tagType = getTagType(rangeTag)
-      raise 'bad tag in rangestring' if tagType.nil?
       if tagType.to_s.index('spanner').nil?
         tags = [rangeTag]
       else
         tags = expandRangeTag(rangeTag, tagType)
       end
-      #maybe put in another method, have this return the type and also tags
-      #or take the get tag type out and put in antoher method <--this
       addToTagBucket(tags, tagType)
     end
   end
@@ -44,6 +40,7 @@ class RangeParser
     else
       tags.each do |tag|
         @tagBuckets[bucket] << tag.slice(0,2)
+        #todo to_sym
       end
     end
   end
@@ -53,6 +50,7 @@ class RangeParser
     suit = tag.slice(2,4)
     tagBuckets[:single][hand] ||= []
     tagBuckets[:single][hand] << suit
+    #todo to_sym
   end
 
   def bucketType(tagType)
@@ -122,6 +120,7 @@ class RangeParser
     tagTypes.each_pair do |type, pattern|
       if rangeTag =~ pattern then found = type end
     end
+    raise 'bad tag in rangestring' if found.nil?
     found
   end
 end
