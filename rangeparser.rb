@@ -1,8 +1,9 @@
 class RangeParser
    attr_accessor :tagBuckets
+   attr_accessor :rangeManager
 
-  def initialize(range)
-    @range = range
+  def initialize(rangeManager)
+    @rangeManager = rangeManager
     @tagBuckets = {
       suited: [],
       offsuited: [],
@@ -11,12 +12,10 @@ class RangeParser
     }
   end
 
-=begin
   def parseRange(rangeString)
     expandRangeTags(rangeString)
-    populateRange(@tagBuckets)
+    rangeManager.populateRange(self)
   end
-=end
 
   def expandRangeTags(rangeString)
     rangeTags = rangeString.split(',')
@@ -39,18 +38,16 @@ class RangeParser
       addSingle(tag)
     else
       tags.each do |tag|
-        @tagBuckets[bucket] << tag.slice(0,2)
-        #todo to_sym
+        @tagBuckets[bucket] << tag.slice(0,2).to_sym
       end
     end
   end
 
   def addSingle(tag)
-    hand = tag.slice(0,2)
-    suit = tag.slice(2,4)
+    hand = tag.slice(0,2).to_sym
+    suit = tag.slice(2,4).to_sym
     tagBuckets[:single][hand] ||= []
     tagBuckets[:single][hand] << suit
-    #todo to_sym
   end
 
   def bucketType(tagType)
@@ -61,16 +58,11 @@ class RangeParser
       single: [:single]
     }
 
-    if types[:suited].include?(tagType)
-      bucket = :suited
-    elsif types[:offsuited].include?(tagType)
-      bucket = :offsuited
-    elsif types[:both].include?(tagType)
-      bucket = :both
-    elsif types[:single].include?(tagType)
-      bucket = :single
+    bucketType = nil
+    types.each_pair do |bucket,tagTypes|
+      bucketType = bucket if tagTypes.include?(tagType)
     end
-    bucket
+    bucketType
   end
 
   def expandRangeTag(rangeTag, tagType)
@@ -118,7 +110,7 @@ class RangeParser
     }
     found = nil
     tagTypes.each_pair do |type, pattern|
-      if rangeTag =~ pattern then found = type end
+      found = type if rangeTag =~ pattern
     end
     raise 'bad tag in rangestring' if found.nil?
     found

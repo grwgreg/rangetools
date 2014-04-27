@@ -30,6 +30,7 @@ describe rangeParser do
     puts rangeParser.tagBuckets.inspect
     puts 'here'
 
+=begin
     expect { rangeParser.expandRangeTags('AK, afs') }.to raise_error
 
     rangeParser.tagBuckets[:suited].length.should == 7
@@ -46,6 +47,23 @@ describe rangeParser do
     rangeParser.tagBuckets[:single]['98'].should include('cc', 'ss')
     rangeParser.tagBuckets[:single]['KJ'].should include('cs')
     rangeParser.tagBuckets[:single]['97'].should include('sc')
+=end
+    expect { rangeParser.expandRangeTags('AK, afs') }.to raise_error
+
+    rangeParser.tagBuckets[:suited].length.should == 7
+    rangeParser.tagBuckets[:suited].should include(:'74', :QJ)
+
+
+    rangeParser.tagBuckets[:offsuited].length.should == 4
+    rangeParser.tagBuckets[:offsuited].should include(:'98', :'95')
+
+    rangeParser.tagBuckets[:both].length.should == 23
+    rangeParser.tagBuckets[:both].should include(:AK, :Q7, :'55', :'86', :'82', :'44')
+
+    rangeParser.tagBuckets[:single].length.should == 3
+    rangeParser.tagBuckets[:single][:'98'].should include(:cc, :ss)
+    rangeParser.tagBuckets[:single][:KJ].should include(:cs)
+    rangeParser.tagBuckets[:single][:'97'].should include(:sc)
   end
 
 end

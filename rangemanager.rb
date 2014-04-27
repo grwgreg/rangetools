@@ -1,5 +1,6 @@
 class RangeManager
   attr_accessor :range
+
   def initialize
     @range = buildRange
   end
@@ -37,34 +38,62 @@ class RangeManager
 
   def setAll(tag)
    combos.each_key do |combo|
-     @range[tag][combo] = true
+     range[tag][combo] = true
    end
   end
 
   def setSuited(tag)
     suits = [:cc, :dd, :hh, :ss]
     suits.each do |suit|
-      @range[tag][suit] = true
+      range[tag][suit] = true
     end
   end
 
   def setOffSuited(tag)
     offSuits = combos.keys - [:cc, :dd, :hh, :ss]
     offSuits.each do |offSuit|
-      @range[tag][offSuit] = true
+      range[tag][offSuit] = true
     end
 
   end
 
-  def setSingleHand(hand)
-    hand = hand.shift
-    tag = hand[0]
-    suits = hand[1]
+  def setSingleHand(tag, suits)
     suits.each do |combo|
-      @range[tag][combo] = true
+      range[tag][combo] = true
     end
   end
 
-  #make method that takes tagBuckets, calls each of the above methods on each
-  #then make method that takes the rangeparser object, gets the tagbuckets and invokes above
+  def resetAll
+    range.each_pair do |tag, combos|
+      combos.each_key do |combo|
+        range[tag][combo] = false
+      end
+    end
+  end
+
+  def populateRange(rangeParser)
+    tagBuckets = rangeParser.tagBuckets
+    resetAll
+    processTagBuckets(tagBuckets)
+  end
+
+  def processTagBuckets(tagBuckets)
+    rangeSetters  = {
+      setSingleHand: tagBuckets[:single],
+      setOffSuited: tagBuckets[:offsuited],
+      setSuited: tagBuckets[:suited],
+      setAll: tagBuckets[:both]
+    }
+    rangeSetters.each_pair do |setter, bucket|
+      setAllInBucket(setter, bucket)
+    end
+  end
+
+  def setAllInBucket(setter, bucket)
+    if bucket.is_a?(Hash) then
+      bucket.each_pair {|tag, suits| send(setter,tag, suits)}
+    else
+      bucket.each { |tag| send(setter, tag) }
+    end
+  end
 end
