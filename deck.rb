@@ -16,7 +16,7 @@ class Deck
         card = {}
         card[:suit] = suit
         card[:rank] = rank
-        card[:tag] = tag
+#dontneedthis?        card[:tag] = tag
         new_deck << card
       end
     end
