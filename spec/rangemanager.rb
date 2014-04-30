@@ -80,5 +80,8 @@ describe 'RangeManager' do
     @rangeManager.range[:"43"][:cc].should == false
     @rangeManager.range[:"43"][:cd].should == true
 
+    puts '----'
+    puts @rangeManager.range.inspect
+    puts '----'
   end
 end

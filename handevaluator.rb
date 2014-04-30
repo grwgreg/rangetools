@@ -25,6 +25,59 @@ class HandEvaluator
     }
   end
 
+  def evalulateRange(rangeManager)
+    twoCardHashes = allTwoCardHashes(rangeManager.range)
+    twoCardHashes.each do |twoCardHand|
+      evalHand(twoCardHand)
+    end
+  end
+
+  def evalHand(twoCardHand)
+    #check pairs,straights,flushes and populate madehands
+  end
+
+  def allTwoCardHashes(range)
+    twoCardHands = []
+    range.each_pair do |tag, combos|
+      twoCardHands += unpackHands(tag, combos)
+    end
+    twoCardHands
+  end
+
+  def unpackHands(tag, combos)
+    lRank, rRank = unpackRanks(tag)
+    combos.keep_if {|combo, on| on}
+    buildCardHashes(lRank, rRank, combos)
+  end
+
+  def unpackRanks(tag)
+    l, r = tag[0].to_sym, tag[1].to_sym
+  end
+
+  def buildCardHashes(lRank, rRank, combos)
+    cardHashes = []
+    combos.each_key do |combo|
+      hand = []
+      hand << buildCardHash(lRank, combo, 0)
+      hand << buildCardHash(rRank, combo, 1)
+      cardHashes << hand
+    end
+    cardHashes
+  end
+
+  def buildCardHash(rank, combo, lOrR)
+    {
+     suit: combo[lOrR].to_sym,
+     rank: rankNumber(rank),
+     tag: rank
+    }
+  end
+
+  def rankNumber(rank)
+    orders = [:'2', :'3', :'4', :'5', :'6', :'7', :'8', :'9', :T, :J, :Q, :K, :A]
+    orders.index(rank) + 2
+  end
+
   #hand is array of card hashes
   #{suit: :c, rank: 13, tag: :A} => Ac
   def buildPairBuckets(hand)
@@ -58,24 +111,31 @@ class HandEvaluator
 
 =begin
   def evalPockets(hand)
-    if hand.length == 2 
+    if hand.length == 2
       @madeHands[:pocket_pair] += 1
     end
   end
 =end
 end
 
-#need a method to convert AKcs into hash of Ac and hash of Ks
 #should I distinguish between pairs on the board vs in hand? how?
-#
-#
-#method to take range object and iterate through every combo
-#for each combo, pass to AKcs to Ac Ks method
-#then to main eval method
-#build pair buckets
-#parse bucket to populate the madehand hash
 #
 #4flush on board vs not? this is less important than pairs becaues obvious from board, same with straight
 #i guess pair on board is pretty obvious too? so is trips vs set cause board paired
+#i think accounting for pair on board is important maybe an 'only pair on board' count
 #
 #overcards require comparison though... over pocket pairs too
+#
+#
+#need to account for if you have full house, to not double count pair and trips
+#build a new pair hand strength object that has 2pair and quads etc?
+#or do sequential checks on pairbuckets?
+#
+#building a new pair type hand strength obj is probably cleanest, needs side effect
+#of popping off results to be worth new hash, 
+#
+#ie if pairBuckets.pair.lenth >= 3
+#    pair_strength[:twopair] << pairBuckets.pair
+#    pairBuckets.pair = [] or .empty or whatever ruby method
+#
+#    except start at strongest hand so don't double count
