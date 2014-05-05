@@ -80,7 +80,8 @@ class HandEvaluator
   end
 
   def rankNumber(rank)
-    orders = [:'2', :'3', :'4', :'5', :'6', :'7', :'8', :'9', :T, :J, :Q, :K, :A]
+    nums = (2..9).collect { |x| x.to_s.to_sym }
+    orders = nums + [:T, :J, :Q, :K, :A]
     orders.index(rank) + 2
   end
 
