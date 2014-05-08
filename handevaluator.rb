@@ -1,55 +1,144 @@
 class HandEvaluator
   attr_accessor :board
   attr_accessor :madeHands #what to call this?
+  attr_accessor :twoCardHand
 
   def initialize
     @madeHands = {
       total: 0,
-      quads: 0,
-      pocket_pair: 0,
-      pair: 0,
-      straight: 0,
-      straight_on_board: 0,
-      oesd: 0,
-      doublegut: 0,
-      gutshot: 0,
-      pair_plus_gutshot: 0,
-      pair_plus_oesd: 0,
-      pair_plus_doublegut: 0,
-      flush: 0,
-      two_pair: 0,
-      trips: 0,
-      set: 0,
-      full_house: 0,
-      pair_plus_oesd: 0,
-      pair_plus_gut: 0,
-      pair_plus_over: 0,
-      pair_plus_flush: 0,
-      ace_high: 0,
-      premium_overs: 0, #QJ+ both overs
+      quads: [],
+      pocket_pair: [],
+      pair: [],
+      straight: [],
+      straight_on_board: [],
+      oesd: [],
+      doublegut: [],
+      gutshot: [],
+      pair_plus_gutshot: [],
+      pair_plus_oesd: [],
+      pair_plus_doublegut: [],
+      pair_plus_flush_draw: [],
+      flush: [],
+      flush_draw: [],
+      flush_on_board: [],
+      flush_draw_on_board: [],
+      two_pair: [],
+      trips: [],
+      set: [],
+      full_house: [],
+      pair_plus_oesd: [],
+      pair_plus_gut: [],
+      pair_plus_over: [],
+      pair_plus_flush: [],
+      ace_high: [],
+      premium_overs: [], #QJ+ both overs
+#make a pair plus over?
     }
   end
 
   def evalulateRange(rangeManager)
     twoCardHashes = allTwoCardHashes(rangeManager.range)
     twoCardHashes.each do |twoCardHand|
+      @twoCardHand = twoCardHand
       #evalHand(twoCardHand)
     end
   end
 
   def evalHand(twoCardHand)
-#don't want to count pairs if you find a flush etc... need a smart way of merging in result
+  #first check pairevaluator, if quads or full house then break, otherwise mark if 
+  #we have a pair and pass that along to eval flush and eval straight
+  #if neither flush or straight then merge in the paireval's object for overcards etc
 
-    #check pairs,straights,flushes and populate madehands
+
 =begin
-#use this after pairevaulator.rb done
-    pairEvaluator = new PairEvaluator(twoCardHand, @board)
     @madeHands[:total] += 1
-    #merge in PairEvaluator.madePairHands
+    pairEvaluator = new PairEvaluator(twoCardHand, @board)
+    madePairHands = pairEvaluator.madePairHands
+    hasPair = true if madePairHands[:pair] > 0
+    flushStrength = evalFlush(twoCardHand, board, hasPair)
+    straightStrength = evalStraight(twoCardHand, board, hasPair)
 
-    #mark if there is a pair found to pass into evalstraight
-    evalStraight(twoCardHand, @board)
+    if flush & straight
+    if quads || full house, mergepairhands
+    if flush merge flush
+    merge pairhands
+
+    wait, flush and straight merge automatically just by being ran...
+
+    this really needs to be another class which returns a hash like pairhandevaluator
+
 =end
+  end
+
+  def markMadeHand(handType)
+    handTag = buildHandTag(@twoCardHand)
+    @madeHands[handType] << handTag
+  end
+
+  def buildHandTag(twoCardHand)
+    if twoCardHand[0][:rank] < twoCardHand[1][:rank]
+      card1 = twoCardHand[1]
+      card2 = twoCardHand[0]
+    else
+      card1 = twoCardHand[0]
+      card2 = twoCardHand[1]
+    end
+    r1 = card1[:tag].to_s
+    r2 = card2[:tag].to_s
+    s1 = card1[:suit].to_s
+    s2 = card2[:suit].to_s
+    r1+r2+s1+s2
+  end
+
+  def evalFlush(twoCardHand, board, hasPair=false)
+    fullHand, board = prepareForFlush(twoCardHand, board)
+    handStrength = flushStrength(fullHand)
+    boardStrength = flushStrength(board)
+    if handStrength == :flush
+      handStrength = :flush_on_board if boardStrength == :flush
+    elsif handStrength == :flush_draw
+      handStrength = :flush_draw_on_board if boardStrength == :flush
+    end
+    return if handStrength.nil?
+    markMadeHand(handStrength)
+    pairPlusFlush(handStrength, hasPair)
+    handStrength
+    
+  end
+
+  def flushStrength(hand)
+    suitBuckets = buildSuitBuckets(hand)
+    found = nil
+    suitBuckets.each_pair do |suit, count|
+      if count > 4
+        found = :flush
+      elsif count > 3
+        found = :flush_draw
+      end
+    found
+    end
+
+  end
+
+  def pairPlusFlush(handStrength, hasPair)
+    return unless hasPair && (handStrength == :flush_draw)
+    markMadeHand(:pair_plush_flush_draw)
+    
+  end
+
+  def buildSuitBuckets(fullHand)
+    fullHand.inject({}) do |suitBuckets, suit|
+      suitBuckets[suit] ||= 0
+      suitBuckets[suit] += 1
+      suitBuckets
+    end
+  end
+
+  def prepareForFlush(twoCardHand, board)
+    twoCardHand = twoCardHand.collect {|card| card[:suit]}
+    board = board.collect {|card| card[:suit]}
+    fullHand = (twoCardHand + board)
+    [fullHand, board]
   end
 
   def evalStraight(twoCardHand, board, hasPair=false)
@@ -60,7 +149,7 @@ class HandEvaluator
       handStrength = :straight_on_board if boardStrength == :straight
     end
     return if handStrength.nil?
-    #@madeHands[handStrength] += 1
+    markMadeHand(handStrength)
     pairPlusStraight(handStrength, hasPair)
     handStrength
     
@@ -69,7 +158,7 @@ class HandEvaluator
   def pairPlusStraight(handStrength, hasPair)
     return unless hasPair && (handStrength != :straight)
     pairPlus = ('pair_plus_' + handStrength.to_s).to_sym
-    #@madeHands[pairPlus] += 1
+    markMadeHand(pairPlus)
     
   end
 
@@ -79,7 +168,7 @@ class HandEvaluator
     fullHand = (twoCardHand + board).uniq.sort
     fullHand = wheelFix(fullHand)
     board = wheelFix(board).uniq.sort
-    return fullHand, board
+    [fullHand, board]
 
   end
 
@@ -178,3 +267,7 @@ class HandEvaluator
   end
 
 end
+
+#im starting to think this needs another class, one for each 2 card hand instance
+#otherwise you either have to pass extra arguments around for every single function
+#or have an instance variable that changes every hand and is annoying and hard to test

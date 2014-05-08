@@ -7,6 +7,11 @@ require '../handevaluator.rb'
 describe 'Range Tools' do
   before(:each) do
     @handEvaluator = HandEvaluator.new
+    hand = [
+      {suit: :h, tag: :'J', rank: 11},
+      {suit: :c, tag: :'A', rank: 14}
+      ]
+    @handEvaluator.twoCardHand = hand
     @handEvaluator.board = [
       {suit: :c, tag: :A, rank: 14},
       {suit: :h, tag: :J, rank: 11},
@@ -133,6 +138,24 @@ describe 'Range Tools' do
     hay = [4,3,0,5]
     needle = [9]
     @handEvaluator.findSubArray(hay, needle).should == false
+  end
+
+  it 'has build suit buckets method' do
+    board = [:c, :s, :c, :d, :s]
+    buckets = @handEvaluator.buildSuitBuckets(board)
+    buckets[:c].should == 2
+    buckets[:d].should == 1
+    buckets[:s].should == 2
+    buckets[:h].should == nil
+  end
+
+  it 'has build hand tag method for array of found hands' do 
+    hand = [
+      {suit: :h, tag: :'J', rank: 11},
+      {suit: :c, tag: :'A', rank: 14}
+      ]
+    @handEvaluator.twoCardHand = hand
+    @handEvaluator.buildHandTag(hand).should == 'AJch'
   end
 
 end
