@@ -1,3 +1,7 @@
+require('./pairevaluator.rb')
+require('./flushevaluator.rb')
+require('./straightevaluator.rb')
+
 class HandEvaluator
   attr_accessor :board
   attr_accessor :madeHands #what to call this?
@@ -45,29 +49,21 @@ class HandEvaluator
   end
 
   def evalHand(twoCardHand)
-  #first check pairevaluator, if quads or full house then break, otherwise mark if 
-  #we have a pair and pass that along to eval flush and eval straight
-  #if neither flush or straight then merge in the paireval's object for overcards etc
 
-
-=begin
     @madeHands[:total] += 1
-    pairEvaluator = new PairEvaluator(twoCardHand, @board)
+    pairEvaluator = PairEvaluator.new(twoCardHand, @board)
     madePairHands = pairEvaluator.madePairHands
     hasPair = true if madePairHands[:pair] > 0
-    flushStrength = evalFlush(twoCardHand, board, hasPair)
-    straightStrength = evalStraight(twoCardHand, board, hasPair)
-
+    if madePairHands[:quads] > 0 || madePairHands[:full_house] > 0
+      mergeMadePairHands(madePairHands)       
+=begin
     if flush & straight
     if quads || full house, mergepairhands
-    if flush merge flush
+    if flush merge flush and also run flush+pair
+    if straight merge and also straight + pair 
     merge pairhands
-
-    wait, flush and straight merge automatically just by being ran...
-
-    this really needs to be another class which returns a hash like pairhandevaluator
-
 =end
+    end
   end
 
   def markMadeHand(handType)
@@ -90,6 +86,7 @@ class HandEvaluator
     r1+r2+s1+s2
   end
 
+=begin
   def evalFlush(twoCardHand, board, hasPair=false)
     fullHand, board = prepareForFlush(twoCardHand, board)
     handStrength = flushStrength(fullHand)
@@ -97,7 +94,7 @@ class HandEvaluator
     if handStrength == :flush
       handStrength = :flush_on_board if boardStrength == :flush
     elsif handStrength == :flush_draw
-      handStrength = :flush_draw_on_board if boardStrength == :flush
+      handStrength = :flush_draw_on_board if boardStrength == :flush_draw
     end
     return if handStrength.nil?
     markMadeHand(handStrength)
@@ -119,6 +116,7 @@ class HandEvaluator
     end
 
   end
+=end
 
   def pairPlusFlush(handStrength, hasPair)
     return unless hasPair && (handStrength == :flush_draw)
@@ -126,6 +124,7 @@ class HandEvaluator
     
   end
 
+=begin
   def buildSuitBuckets(fullHand)
     fullHand.inject({}) do |suitBuckets, suit|
       suitBuckets[suit] ||= 0
@@ -140,7 +139,9 @@ class HandEvaluator
     fullHand = (twoCardHand + board)
     [fullHand, board]
   end
+=end
 
+=begin
   def evalStraight(twoCardHand, board, hasPair=false)
     fullHand, board = prepareForStraight(twoCardHand, board)
     handStrength = straightStrength(fullHand)
@@ -154,6 +155,7 @@ class HandEvaluator
     handStrength
     
   end
+=end
 
   def pairPlusStraight(handStrength, hasPair)
     return unless hasPair && (handStrength != :straight)
@@ -162,6 +164,7 @@ class HandEvaluator
     
   end
 
+=begin
   def prepareForStraight(twoCardHand, board)
     twoCardHand = twoCardHand.collect {|card| card[:rank]}
     board = board.collect {|card| card[:rank]}
@@ -221,9 +224,9 @@ class HandEvaluator
     (hand << 1).sort
   end
 
-  
+=end
 
-  def allTwoCardHashes(range)
+def allTwoCardHashes(range)
     twoCardHands = []
     range.each_pair do |tag, combos|
       twoCardHands += unpackHands(tag, combos)
@@ -268,6 +271,7 @@ class HandEvaluator
 
 end
 
-#im starting to think this needs another class, one for each 2 card hand instance
-#otherwise you either have to pass extra arguments around for every single function
-#or have an instance variable that changes every hand and is annoying and hard to test
+#5-30
+#def leave pair plush logic in this class because needs marking of hands logic
+#still need merge pair hand return hash method
+#put module flush/st methods directly in this classes eval hand method

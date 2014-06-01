@@ -55,6 +55,7 @@ describe 'Range Tools' do
     allHands.should include([{:suit=>:d, :rank=>7, :tag=>:"7"}, {:suit=>:s, :rank=>7, :tag=>:"7"}])
   end
 
+=begin
   it 'has straight diffs method' do
     diffs = @handEvaluator.straightDiffs([4,5,8,11,14])
     diffs.should == [1,3,3,3]
@@ -140,6 +141,9 @@ describe 'Range Tools' do
     @handEvaluator.findSubArray(hay, needle).should == false
   end
 
+=end
+
+=begin
   it 'has build suit buckets method' do
     board = [:c, :s, :c, :d, :s]
     buckets = @handEvaluator.buildSuitBuckets(board)
@@ -148,6 +152,7 @@ describe 'Range Tools' do
     buckets[:s].should == 2
     buckets[:h].should == nil
   end
+=end
 
   it 'has build hand tag method for array of found hands' do 
     hand = [
@@ -156,6 +161,20 @@ describe 'Range Tools' do
       ]
     @handEvaluator.twoCardHand = hand
     @handEvaluator.buildHandTag(hand).should == 'AJch'
+  end
+
+  it 'has evalhand method' do
+    hand = [
+      {suit: :h, tag: :'J', rank: 11},
+      {suit: :c, tag: :'A', rank: 14}
+      ]
+    @handEvaluator.board = [
+      {suit: :c, tag: :A, rank: 14},
+      {suit: :h, tag: :K, rank: 13},
+      {suit: :s, tag: :"3", rank: 3}
+      ]
+    puts @handEvaluator.evalHand(hand)
+
   end
 
 end
