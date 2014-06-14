@@ -1,6 +1,5 @@
 module FlushEvaluator
   extend self
-  #put main method here
 
   def evalFlush(twoCardHand, board)
     fullHand, board = prepareForFlush(twoCardHand, board)
@@ -15,7 +14,6 @@ module FlushEvaluator
   end
 
   private
-  #put eerything else here
 
   def flushStrength(hand)
     suitBuckets = buildSuitBuckets(hand)
@@ -28,16 +26,7 @@ module FlushEvaluator
       end
     end
     found
-
   end
-
-=begin
-  def pairPlusFlush(handStrength, hasPair)
-    return unless hasPair && (handStrength == :flush_draw)
-    #markMadeHand(:pair_plush_flush_draw)
-    
-  end
-=end
 
   def buildSuitBuckets(fullHand)
     fullHand.inject({}) do |suitBuckets, suit|

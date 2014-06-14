@@ -13,7 +13,7 @@ class PairEvaluator
       trips: 0,
       full_house: 0,
       ace_high: 0,
-      premium_overs: 0, #KQ+ both overs
+      premium_overs: 0,
       over_cards: 0,
       one_over_card: 0,
       mid_pair: 0,
