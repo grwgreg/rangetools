@@ -3,12 +3,23 @@ require 'bundler/setup'
 require 'rspec'
 require '../rangemanager.rb'
 require '../rangeparser.rb'
+require '../rangeevaluator.rb'
+require '../handevaluator.rb'
+require '../pairevaluator.rb'
 
 
 describe 'Range Tools' do
   before(:each) do
     @rangeManager = RangeManager.new
     @rangeParser = RangeParser.new(@rangeManager)
+
+    handEvaluator = HandEvaluator.new
+    board = [
+      {suit: :c, tag: :A, rank: 14},
+      {suit: :s, tag: :J, rank: 11},
+      {suit: :s, tag: :"3", rank: 3}
+    ]
+    @rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
   end
   it 'rangeparser parses raneg and populates range object' do
     @rangeManager.range[:AK][:cc].should == false
@@ -45,5 +56,24 @@ describe 'Range Tools' do
     end
 =end
   end
+  it 'blalba' do
 
+    @rangeParser.parseRange('AK, KJs, 99, QJ-6, T4-2s, 53o, 87-3o, 66-22')
+    @rangeEvaluator.evaluateRange(@rangeManager)
+
+   @rangeEvaluator.madeHands[:pocket_pair].should include('99cd')
+   @rangeEvaluator.madeHands[:pocket_pair].should_not include('99cc')
+   puts @rangeEvaluator.madeHands
+  end
+
+  it 'blhehehehlba' do
+
+=begin
+    @rangeParser.parseRange('66-22')
+    @rangeEvaluator.evaluateRange(@rangeManager)
+  puts @rangeParser.tagBuckets
+   @rangeManager.range
+   @rangeEvaluator.madeHands
+=end
+  end
 end

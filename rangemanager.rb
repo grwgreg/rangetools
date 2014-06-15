@@ -37,7 +37,8 @@ class RangeManager
   end
 
   def setAll(tag)
-   combos.each_key do |combo|
+   pair = true if tag[0] == tag[1] 
+   _combos(pair).each_key do |combo|
      range[tag][combo] = true
    end
   end
