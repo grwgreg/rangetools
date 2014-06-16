@@ -19,6 +19,7 @@ class PairEvaluator
       mid_pair: 0,
       low_pair: 0,
       high_pair: 0,
+      top_pair: 0,
       premium_pocket: 0,
       over_pair: 0,
       pair_on_board: 0
@@ -83,8 +84,17 @@ class PairEvaluator
     if boardRanks.include?(lcard) || boardRanks.include?(rcard) || (lcard == rcard)
       evalPairStrength
       evalPocketPair(lcard, rcard)
+      evalTopPair(lcard, rcard)
     else
       @madePairHands[:pair_on_board] += 1
+    end 
+  end
+
+
+  def evalTopPair(lcard, rcard)
+    if (boardRanks.include?(lcard) && boardRanks.max == lcard) \
+    || (boardRanks.include?(rcard) && boardRanks.max == rcard)
+      @madePairHands[:top_pair] += 1
     end 
   end
 

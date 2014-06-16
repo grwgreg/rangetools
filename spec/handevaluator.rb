@@ -44,6 +44,7 @@ describe 'Hand Evaluator' do
       high_pair: [],
       low_pair: [],
       over_pair: [],
+      top_pair: [],
       pair_on_board: []
     }
   end
@@ -214,11 +215,38 @@ result[:flush_on_board].should == ["AJcc"]
     board = [
       {suit: :h, tag: :T, rank: 10},
       {suit: :d, tag: :"8", rank: 8},
-      {suit: :h, tag: :'9', rank: 8},
+      {suit: :h, tag: :'9', rank: 9},
       {suit: :s, tag: :'A', rank: 14}
       ]
     result = @handEvaluator.evalHand(board, hand, @madeHands)
-    #result[:doublegut].should == ["98ch"]
-#doublegutshot is broken
+    result[:doublegut].should == ["Q6ch"]
+  end
+  it 'evals top pair' do
+    hand = [
+      {suit: :h, tag: :'6', rank: 6},
+      {suit: :c, tag: :Q, rank: 12}
+      ]
+    board = [
+      {suit: :h, tag: :T, rank: 10},
+      {suit: :d, tag: :"8", rank: 8},
+      {suit: :h, tag: :'9', rank: 8},
+      {suit: :s, tag: :'Q', rank: 12}
+      ]
+    result = @handEvaluator.evalHand(board, hand, @madeHands)
+    result[:top_pair].should == ["Q6ch"]
+  end
+  it 'evals pair on board' do
+    hand = [
+      {suit: :h, tag: :'6', rank: 6},
+      {suit: :c, tag: :Q, rank: 12}
+      ]
+    board = [
+      {suit: :h, tag: :T, rank: 10},
+      {suit: :d, tag: :"8", rank: 8},
+      {suit: :h, tag: :'9', rank: 8},
+      {suit: :s, tag: :'9', rank: 9}
+      ]
+    result = @handEvaluator.evalHand(board, hand, @madeHands)
+    result[:pair_on_board].should == ["Q6ch"]
   end
 end

@@ -40,6 +40,7 @@ class RangeEvaluator
       mid_pair: [],
       high_pair: [],
       low_pair: [],
+      top_pair: [],
       over_pair: [],
       pair_on_board: []
 
