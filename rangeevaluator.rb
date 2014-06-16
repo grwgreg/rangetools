@@ -32,7 +32,6 @@ class RangeEvaluator
       pair_plus_oesd: [],
       pair_plus_gut: [],
       pair_plus_over: [],
-      pair_plus_flush: [],
       combo_draw: [],
       ace_high: [],
       over_cards: [],

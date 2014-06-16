@@ -46,6 +46,13 @@ class HandEvaluator
     madeHands = markPairPlusFlush(madeHands, flushStrength, hasPair, twoCardHand)
     madeHands = markPairPlusStraight(madeHands, straightStrength, hasPair, twoCardHand)
     madeHands = markComboDraws(madeHands, straightStrength, flushStrength, twoCardHand)
+    madeHands = markDraws(madeHands, flushStrength, twoCardHand)
+    madeHands = markDraws(madeHands, straightStrength, twoCardHand)
+  end
+
+  def markDraws(madeHands, handStrength, twoCardHand)
+    return madeHands unless handStrength
+    markMadeHand(madeHands, handStrength, twoCardHand)
   end
 
   def markComboDraws(madeHands, straightStrength, flushStrength, twoCardHand)

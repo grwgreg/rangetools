@@ -103,6 +103,7 @@ class PairEvaluator
     elsif pair < 10
       @madePairHands[:mid_pair] += 1
     else
+#here check that one of our two cards is top pair?
       @madePairHands[:high_pair] += 1
     end
   end
