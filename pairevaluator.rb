@@ -1,147 +1,130 @@
-class PairEvaluator
-  attr_accessor :board
-  attr_accessor :madePairHands
-  attr_accessor :pairBuckets
-  attr_accessor :done
+module PairEvaluator
+  extend self
 
-  def initialize(twoCardHand, board)
-    @madePairHands = {
-      quads: 0,
-      pocket_pair: 0,
-      pair: 0,
-      two_pair: 0,
-      trips: 0,
-      full_house: 0,
-      ace_high: 0,
-      premium_overs: 0,
-      over_cards: 0,
-      one_over_card: 0,
-      mid_pair: 0,
-      low_pair: 0,
-      high_pair: 0,
-      top_pair: 0,
-      premium_pocket: 0,
-      over_pair: 0,
-      pair_on_board: 0
-    }
-    @twoCardHand = twoCardHand
-    @board = board
-    @done = false
-    buildPairBuckets(twoCardHand, board)
-    evalPairBuckets
+  def evalPairHands(twoCardHand, board)
+    pairBuckets = buildPairBuckets(twoCardHand, board)
+    pairBuckets = preparePairBuckets(pairBuckets)
+    evalPairBuckets(pairBuckets, twoCardHand, board)
   end
 
-  def evalPairBuckets
-    preparePairBuckets
-    evalQuads
-    evalFullHouse
-    evalTrips
-    evalTwoPair
-    evalPair
-    evalOverCards
+  private
+
+  def evalPairBuckets(pairBuckets, twoCardHand, board)
+    pairHands = {}
+    pairValue = findPairValue(pairBuckets)
+    pairHands[pairValue] = true if pairValue
+    if pairValue == :pair
+      pairHands = evalPairType(pairHands, pairBuckets, twoCardHand, board)
+    elsif pairValue.nil?
+      pairHands = evalOverCards(pairHands, twoCardHand, board)
+    end
+    pairHands
   end
 
-  def evalQuads
-    return unless @pairBuckets[:quads].any?
-    @madePairHands[:quads] += 1
-    @done = true
+  def findPairValue(pairBuckets)
+    pairValue = nil
+    if pairValue = hasQuads(pairBuckets)
+    elsif pairValue = hasFullHouse(pairBuckets)
+    elsif pairValue = hasTrips(pairBuckets)
+    elsif pairValue = hasTwoPair(pairBuckets)
+    else pairValue = hasPair(pairBuckets)
+    end
+    pairValue
   end
 
-  def evalFullHouse
-    return if @done
+  def hasQuads(pairBuckets)
+    :quads if pairBuckets[:quads].any?
+  end
+
+  def hasFullHouse(pairBuckets)
     found = false
-    if @pairBuckets[:trips].length > 1
+    if pairBuckets[:trips].length > 1
       found = true
-    elsif @pairBuckets[:trips].any? and @pairBuckets[:pairs].any?
+    elsif pairBuckets[:trips].any? and pairBuckets[:pairs].any?
       found = true
     end
-    return unless found
-    @madePairHands[:full_house] += 1
-    @done = true
+    :full_house if found
   end
 
-  def evalTrips
-    return unless @pairBuckets[:trips].any? && !@done
-    @madePairHands[:trips] += 1
-    @done = true
+  def hasTrips(pairBuckets)
+    :trips if pairBuckets[:trips].any?
   end
 
-  def evalTwoPair
-    return unless @pairBuckets[:pairs].length > 1 && !@done
-    @madePairHands[:two_pair] += 1
-    @done = true
+  def hasTwoPair(pairBuckets)
+    :two_pair if pairBuckets[:pairs].length > 1
   end
 
-  def evalPair
-    return unless @pairBuckets[:pairs].any? && !@done
-    @madePairHands[:pair] += 1
-    @done = true
-    evalPairType
+  def hasPair(pairBuckets)
+    :pair if pairBuckets[:pairs].any?
   end
 
-  def evalPairType
-    lcard, rcard = twoCardRanks 
-    if boardRanks.include?(lcard) || boardRanks.include?(rcard) || (lcard == rcard)
-      evalPairStrength
-      evalPocketPair(lcard, rcard)
-      evalTopPair(lcard, rcard)
+  def evalPairType(pairHands, pairBuckets, twoCardHand, board)
+    lcard, rcard = twoCardRanks(twoCardHand)
+    ranks = boardRanks(board)
+    if ranks.include?(lcard) || ranks.include?(rcard) || (lcard == rcard)
+      pairHands = evalPairStrength(pairHands, pairBuckets)
+      pairHands = evalPocketPair(pairHands, lcard, rcard, board)
+      pairHands = evalTopPair(pairHands, lcard, rcard, board)
     else
-      @madePairHands[:pair_on_board] += 1
+      pairHands[:pair_on_board] = true 
     end 
+    pairHands
   end
 
 
-  def evalTopPair(lcard, rcard)
-    if (boardRanks.include?(lcard) && boardRanks.max == lcard) \
-    || (boardRanks.include?(rcard) && boardRanks.max == rcard)
-      @madePairHands[:top_pair] += 1
+  def evalTopPair(pairHands, lcard, rcard, board)
+    ranks = boardRanks(board)
+    if (ranks.include?(lcard) && ranks.max == lcard) \
+    || (ranks.include?(rcard) && ranks.max == rcard)
+      pairHands[:top_pair] = true 
     end 
+    pairHands
   end
 
-  def evalPocketPair(lcard, rcard)
+  def evalPocketPair(pairHands, lcard, rcard, board)
     if lcard == rcard 
-      @madePairHands[:pocket_pair] += 1 
-      @madePairHands[:premium_pocket] += 1 if lcard > 11#QQ+
-      @madePairHands[:over_pair] += 1 if boardRanks.max < lcard
+      pairHands[:pocket_pair] = true 
+      pairHands[:premium_pocket] = true if lcard > 11#QQ+
+      pairHands[:over_pair] = true if boardRanks(board).max < lcard
     end   
+    pairHands
   end 
 
-  def evalPairStrength
-    pair = @pairBuckets[:pairs].first
+  def evalPairStrength(pairHands, pairBuckets)
+    pair = pairBuckets[:pairs].first
     if pair < 7
-      @madePairHands[:low_pair] += 1
+      pairHands[:low_pair] = true 
     elsif pair < 10
-      @madePairHands[:mid_pair] += 1
+      pairHands[:mid_pair] = true 
     else
-#here check that one of our two cards is top pair?
-      @madePairHands[:high_pair] += 1
+      pairHands[:high_pair] = true 
     end
+    pairHands
   end
 
-  def evalOverCards
-    return if @done
-    lcard, rcard = twoCardRanks
-    board = boardRanks
+  def evalOverCards(pairHands, twoCardHand, board)
+    board = boardRanks(board)
+    lcard, rcard = twoCardRanks(twoCardHand)
     if lcard > board.max && rcard > board.max
-      @madePairHands[:over_cards] += 1
+      pairHands[:over_cards] = true 
     elsif lcard > board.max || rcard > board.max
-      @madePairHands[:one_over_card] += 1
+      pairHands[:one_over_card] = true 
     end
-    @madePairHands[:premium_overs] += 1 if twoCardRanks.min > 11
-    @madePairHands[:ace_high] += 1 if twoCardRanks.include?(14)
+    pairHands[:premium_overs] = true if [lcard, rcard].min > 11
+    pairHands[:ace_high] = true if [lcard, rcard].include?(14)
+    pairHands
   end
 
-  def preparePairBuckets
-    replaceTagsWithNumbers
-    fixHighCardEdgeCases
+  def preparePairBuckets(pairBuckets)
+    replaceTagsWithNumbers(pairBuckets)
   end
 
-  def replaceTagsWithNumbers
+  def replaceTagsWithNumbers(pairBuckets)
     numberBuckets = {}
     pairBuckets.each_pair do |bucket, tags|
       numberBuckets[bucket] = tags.map {|tag| rankNumber(tag)}
     end
-    @pairBuckets = numberBuckets
+    numberBuckets
   end
 
   def rankNumber(rank)
@@ -150,25 +133,13 @@ class PairEvaluator
     orders.index(rank) + 2
   end
 
-  def fixHighCardEdgeCases
-#greg todo, need this for comparing hands but useless for this range evaluator
-#because high cards not even evaluated once a pair is found
-    if pairBuckets[:pairs].length > 2
-      min = pairBuckets[:pairs].min
-      pairBuckets[:highs] << pairBuckets[:pairs].delete(min)
-    elsif pairBuckets[:quads].length > 0
-      pairBuckets[:highs] += pairBuckets[:trips]
-      pairBuckets[:highs] += pairBuckets[:pairs]
-    end
-  end
-
   #hand is array of card hashes
   #{suit: :c, rank: 13, tag: :A} => Ac
   def buildPairBuckets(hand, board)
     tags = (hand + board).collect { |card| card[:tag] }
     uniques = tags.uniq
     tagCounts = uniques.collect { |tag| Hash[tag, tags.count(tag)] }
-    @pairBuckets = tagCounts.inject(_pairBuckets) { |bucket, tagCount|
+    tagCounts.inject(_pairBuckets) { |bucket, tagCount|
       tag, count = tagCount.shift
       bucket[whichPairBucket(count)] << tag
       bucket
@@ -193,12 +164,12 @@ class PairEvaluator
     }
   end
 
-  def twoCardRanks
-    @twoCardHand.collect {|card| card[:rank] }
+  def twoCardRanks(twoCardHand)
+    twoCardHand.collect {|card| card[:rank] }
   end
 
-  def boardRanks
-    @board.collect {|card| card[:rank] }
+  def boardRanks(board)
+    board.collect {|card| card[:rank] }
   end
 
 end

@@ -6,69 +6,52 @@ class HandEvaluator
 
   def evalHand(board, twoCardHand, madeHands)
 
-    pairEvaluator = PairEvaluator.new(twoCardHand, board)
-    madePairHands = pairEvaluator.madePairHands
-    hasPair = true if madePairHands[:pair] > 0
+    madePairHands = PairEvaluator.evalPairHands(twoCardHand, board)
     flushStrength = FlushEvaluator.evalFlush(twoCardHand, board)
     straightStrength = StraightEvaluator.evalStraight(twoCardHand, board)
 
     madeHand = nil
     if (flushStrength == :flush && straightStrength == :straight)
       madeHand = :straight_flush
-    elsif (madePairHands[:quads] > 0 || madePairHands[:full_house] > 0)
+    elsif (madePairHands[:quads] || madePairHands[:full_house])
       madeHand = :quads_or_full_house
     elsif flushStrength == :flush
       madeHand = :flush
     elsif straightStrength == :straight
       madeHand = :straight
     else #do all pair plus logic, including combo draw (straight + flush draw logic)
-      madeHands = markDrawsAndCombos(madeHands, flushStrength, straightStrength, hasPair, twoCardHand)
+      hasPair = true if madePairHands[:pair]
+      drawHands = madeDrawHands(straightStrength, flushStrength, hasPair)
+      madeHands = markHands(drawHands, madeHands, twoCardHand)
     end
 
     if !madeHand || madeHand == :quads_or_full_house
-      madeHands = mergeMadePairHands(madePairHands, madeHands, twoCardHand)
+      madeHands = markHands(madePairHands, madeHands, twoCardHand)
     else
       madeHands = markMadeHand(madeHands, madeHand, twoCardHand)
     end
     madeHands
   end
 
-  def mergeMadePairHands(madePairHands, madeHands, twoCardHand)
-    madePairHands.each_pair do |hand, isSet|
-      if !isSet.zero?
+  def madeDrawHands(straightStrength, flushStrength, hasPair)
+    hands = {
+      combo_draw: straightStrength && flushStrength,
+      pair_plus_flush_draw: hasPair && (flushStrength == :flush_draw)
+    }
+    pairPlusX = ('pair_plus_' + straightStrength.to_s).to_sym
+    hands[pairPlusX] = hasPair && straightStrength if straightStrength
+    hands[flushStrength] = true if flushStrength
+    hands[straightStrength] = true if straightStrength
+    hands
+  end
+
+  def markHands(hands, madeHands, twoCardHand)
+    hands.each_pair do |hand, isSet|
+      if isSet
         madeHands = markMadeHand(madeHands, hand, twoCardHand)
       end
     end
     madeHands
-  end
-
-  def markDrawsAndCombos(madeHands, flushStrength, straightStrength, hasPair, twoCardHand)
-    madeHands = markPairPlusFlush(madeHands, flushStrength, hasPair, twoCardHand)
-    madeHands = markPairPlusStraight(madeHands, straightStrength, hasPair, twoCardHand)
-    madeHands = markComboDraws(madeHands, straightStrength, flushStrength, twoCardHand)
-    madeHands = markDraws(madeHands, flushStrength, twoCardHand)
-    madeHands = markDraws(madeHands, straightStrength, twoCardHand)
-  end
-
-  def markDraws(madeHands, handStrength, twoCardHand)
-    return madeHands unless handStrength
-    markMadeHand(madeHands, handStrength, twoCardHand)
-  end
-
-  def markComboDraws(madeHands, straightStrength, flushStrength, twoCardHand)
-    return madeHands unless straightStrength && flushStrength
-    markMadeHand(madeHands, :combo_draw, twoCardHand)
-  end
-
-  def markPairPlusFlush(madeHands, flushStrength, hasPair, twoCardHand)
-    return madeHands unless hasPair && (flushStrength == :flush_draw)
-    markMadeHand(madeHands, :pair_plus_flush_draw, twoCardHand)
-  end
-
-  def markPairPlusStraight(madeHands, straightStrength, hasPair, twoCardHand)
-    return madeHands unless hasPair && straightStrength
-    pairPlus = ('pair_plus_' + straightStrength.to_s).to_sym
-    markMadeHand(madeHands, pairPlus, twoCardHand)
   end
 
   def markMadeHand(madeHands, handType, twoCardHand)
