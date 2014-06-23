@@ -9,13 +9,6 @@ module StraightEvaluator
       handStrength = :straight_on_board if boardStrength == :straight
     end
     handStrength
-=begin
-    return if handStrength.nil?
-    markMadeHand(handStrength)
-    pairPlusStraight(handStrength, hasPair)
-    handStrength
-=end
-    
   end
 
   private
@@ -30,14 +23,31 @@ module StraightEvaluator
 
   end
 
-  def straightStrength(board)
-    diffs = straightDiffs(board)
-    straightMatch(diffs)
+  def straightStrength(fullhand)
+    diffs = straightDiffs(fullhand)
+    match = straightMatch(diffs)
+    return match unless [:a234_false_positive, :akqj_false_positive].include?(match)
+    fixedDiffs = removeEndAce(diffs, match)
+    fixedMatch = straightMatch(fixedDiffs)
+    if fixedMatch.nil? then fixedMatch = :gutshot end
+    fixedMatch
+  end
+
+  def removeEndAce(diffs, match)
+    if match == :a234_false_positive
+      diffs.shift(2)
+      diffs
+    else
+      diffs.pop(2)
+      diffs
+    end
   end
 
   def straightMatch(diffs)
     matches = [
       [:straight, [1,1,1,1]],
+      [:a234_false_positive, [100,1,1,1]],
+      [:akqj_false_positive, [1,1,1,100]],
       [:oesd, [1,1,1]],
       [:doublegut, [2,1,1,2]],
       [:gutshot, [2,1,1]], 
@@ -76,7 +86,9 @@ module StraightEvaluator
 
   def wheelFix(hand)
     return hand unless hand.include?(14)
-    (hand << 1).sort
+    lowSentinel = -99
+    highSentinel = 114 
+    (hand << 1 << lowSentinel << highSentinel).sort
   end
 
 end

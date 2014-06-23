@@ -63,7 +63,7 @@ describe 'Range Tools' do
 
    @rangeEvaluator.madeHands[:pocket_pair].should include('99cd')
    @rangeEvaluator.madeHands[:pocket_pair].should_not include('99cc')
-   puts @rangeEvaluator.madeHands
+  # puts @rangeEvaluator.madeHands
   end
 
   it 'blhehehehlba' do
@@ -75,5 +75,53 @@ describe 'Range Tools' do
    @rangeManager.range
    @rangeEvaluator.madeHands
 =end
+  end
+
+  it 'A234 should be a gutshot' do
+    rangeManager = RangeManager.new
+    rangeParser = RangeParser.new(rangeManager)
+    handEvaluator = HandEvaluator.new
+    board = [
+      {suit: :c, tag: :K, rank: 13},
+      {suit: :s, tag: :'3', rank: 3},
+      {suit: :s, tag: :'2', rank: 2}
+    ]
+    rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
+    rangeParser.parseRange('A4dd')
+    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.madeHands[:gutshot].should include('A4dd')
+  end
+
+  it 'AKQJ should be a gutshot' do
+    rangeManager = RangeManager.new
+    rangeParser = RangeParser.new(rangeManager)
+    handEvaluator = HandEvaluator.new
+    board = [
+      {suit: :c, tag: :A, rank: 14},
+      {suit: :s, tag: :K, rank: 13},
+      {suit: :s, tag: :Q, rank: 12},
+      {suit: :s, tag: :J, rank: 11}
+    ]
+    rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
+    rangeParser.parseRange('43dd')
+    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.madeHands[:gutshot].should include('43dd')
+  end
+
+  it 'works eheuehue' do
+    rangeManager = RangeManager.new
+    rangeParser = RangeParser.new(rangeManager)
+    handEvaluator = HandEvaluator.new
+    board = [
+      {suit: :c, tag: :A, rank: 14},
+      {suit: :s, tag: :'2', rank: 2},
+      {suit: :s, tag: :'3', rank: 3},
+      {suit: :c, tag: :'3', rank: 3}
+    ]
+    rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
+    rangeParser.parseRange('T3, KJss, KJdd')
+    rangeEvaluator.evaluateRange(rangeManager)
+    #rangeEvaluator.madeHands[:gutshot].should include('43dd')
+    puts rangeEvaluator.madeHands
   end
 end
