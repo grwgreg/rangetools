@@ -151,6 +151,23 @@ describe 'Range Tools' do
     rangeParser.parseRange('AA')
     rangeEvaluator.evaluateRange(rangeManager)
     #rangeEvaluator.madeHands[:trips].length.should == 8
+#puts rangeEvaluator.madeHands
+  end
+  it 'straight on board' do
+    rangeManager = RangeManager.new
+    rangeParser = RangeParser.new(rangeManager)
+    handEvaluator = HandEvaluator.new
+    board = [
+      {suit: :c, tag: :T, rank: 10},
+      {suit: :s, tag: :'8', rank: 8},
+      {suit: :c, tag: :'7', rank: 7},
+      {suit: :c, tag: :'9', rank: 6},
+      {suit: :d, tag: :'6', rank: 9}
+    ]
+    rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
+    rangeParser.parseRange('AA')
+    rangeEvaluator.evaluateRange(rangeManager)
+    #rangeEvaluator.madeHands[:trips].length.should == 8
 puts rangeEvaluator.madeHands
   end
 end

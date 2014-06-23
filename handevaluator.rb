@@ -49,8 +49,8 @@ class HandEvaluator
       combo_draw: straightStrength && flushStrength,
       pair_plus_flush_draw: hasPair && (flushStrength == :flush_draw)
     }
-    pairPlusX = ('pair_plus_' + straightStrength.to_s).to_sym
-    hands[pairPlusX] = hasPair && straightStrength if straightStrength
+    pairPlusX = ('pair_plus_' + straightStrength.to_s).to_sym if straightStrength != :straight_on_board
+    hands[pairPlusX] = hasPair && straightStrength if straightStrength && pairPlusX
     hands[flushStrength] = true if flushStrength
     hands[straightStrength] = true if straightStrength
     hands
@@ -72,17 +72,12 @@ class HandEvaluator
   end
 
   def buildHandTag(twoCardHand)
+    card1, card2 = twoCardHand[0], twoCardHand[1]
     if twoCardHand[0][:rank] < twoCardHand[1][:rank]
-      card1 = twoCardHand[1]
-      card2 = twoCardHand[0]
-    else
-      card1 = twoCardHand[0]
-      card2 = twoCardHand[1]
+      card1, card2 = card2, card1
     end
-    r1 = card1[:tag].to_s
-    r2 = card2[:tag].to_s
-    s1 = card1[:suit].to_s
-    s2 = card2[:suit].to_s
+    r1, r2 = card1[:tag].to_s, card2[:tag].to_s
+    s1, s2 = card1[:suit].to_s, card2[:suit].to_s
     r1+r2+s1+s2
   end
 
