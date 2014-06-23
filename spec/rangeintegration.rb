@@ -108,7 +108,7 @@ describe 'Range Tools' do
     rangeEvaluator.madeHands[:gutshot].should include('43dd')
   end
 
-  it 'works eheuehue' do
+  it 'Removes board cards from range' do
     rangeManager = RangeManager.new
     rangeParser = RangeParser.new(rangeManager)
     handEvaluator = HandEvaluator.new
@@ -119,9 +119,23 @@ describe 'Range Tools' do
       {suit: :c, tag: :'3', rank: 3}
     ]
     rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
-    rangeParser.parseRange('T3, KJss, KJdd')
+    rangeParser.parseRange('T3')
     rangeEvaluator.evaluateRange(rangeManager)
-    #rangeEvaluator.madeHands[:gutshot].should include('43dd')
-    puts rangeEvaluator.madeHands
+    rangeEvaluator.madeHands[:trips].length.should == 8
+  end
+  it 'is fun' do
+    rangeManager = RangeManager.new
+    rangeParser = RangeParser.new(rangeManager)
+    handEvaluator = HandEvaluator.new
+    board = [
+      {suit: :c, tag: :A, rank: 14},
+      {suit: :s, tag: :'7', rank: 7},
+      {suit: :c, tag: :'3', rank: 3}
+    ]
+    rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
+    rangeParser.parseRange('AK-T, AA-22, KQ-T, QJ-8, JT-8, T9-7, 98-6, 87-5, 76-5,65ss,65dd')
+    rangeEvaluator.evaluateRange(rangeManager)
+    #rangeEvaluator.madeHands[:trips].length.should == 8
+puts rangeEvaluator.madeHands
   end
 end

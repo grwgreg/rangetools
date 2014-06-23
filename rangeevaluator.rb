@@ -55,12 +55,21 @@ class RangeEvaluator
     end
   end
 
-def allTwoCardHashes(range)
+  def allTwoCardHashes(range)
     twoCardHands = []
     range.each_pair do |tag, combos|
-      twoCardHands += unpackHands(tag, combos)
+      twoCardHand = unpackHands(tag, combos)
+      twoCardHands += removeDeadCards(twoCardHand)
     end
     twoCardHands
+  end
+
+  def removeDeadCards(twoCardHand)
+    twoCardHand.reject { |hand|
+      hand.select { |card|
+        @board.include?(card)
+      }.any?
+    }
   end
 
   def unpackHands(tag, combos)
