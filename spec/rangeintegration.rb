@@ -136,6 +136,21 @@ describe 'Range Tools' do
     rangeParser.parseRange('AK-T, AA-22, KQ-T, QJ-8, JT-8, T9-7, 98-6, 87-5, 76-5,65ss,65dd')
     rangeEvaluator.evaluateRange(rangeManager)
     #rangeEvaluator.madeHands[:trips].length.should == 8
+#puts rangeEvaluator.madeHands
+  end
+  it 'fullhouses work' do
+    rangeManager = RangeManager.new
+    rangeParser = RangeParser.new(rangeManager)
+    handEvaluator = HandEvaluator.new
+    board = [
+      {suit: :c, tag: :A, rank: 14},
+      {suit: :s, tag: :'7', rank: 7},
+      {suit: :c, tag: :'7', rank: 7}
+    ]
+    rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
+    rangeParser.parseRange('AA')
+    rangeEvaluator.evaluateRange(rangeManager)
+    #rangeEvaluator.madeHands[:trips].length.should == 8
 puts rangeEvaluator.madeHands
   end
 end

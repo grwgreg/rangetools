@@ -5,32 +5,43 @@ require('./straightevaluator.rb')
 class HandEvaluator
 
   def evalHand(board, twoCardHand, madeHands)
-
-    madePairHands = PairEvaluator.evalPairHands(twoCardHand, board)
-    flushStrength = FlushEvaluator.evalFlush(twoCardHand, board)
-    straightStrength = StraightEvaluator.evalStraight(twoCardHand, board)
-
-    madeHand = nil
-    if (flushStrength == :flush && straightStrength == :straight)
-      madeHand = :straight_flush
-    elsif (madePairHands[:quads] || madePairHands[:full_house])
-      madeHand = :quads_or_full_house
-    elsif flushStrength == :flush
-      madeHand = :flush
-    elsif straightStrength == :straight
-      madeHand = :straight
-    else #do all pair plus logic, including combo draw (straight + flush draw logic)
-      hasPair = true if madePairHands[:pair]
-      drawHands = madeDrawHands(straightStrength, flushStrength, hasPair)
-      madeHands = markHands(drawHands, madeHands, twoCardHand)
-    end
-
-    if !madeHand || madeHand == :quads_or_full_house
+    madePairHands, flushStrength, straightStrength = madeHandInfo(twoCardHand, board)
+    madeHand = bestMadeHand(flushStrength, straightStrength, madePairHands)
+    if madeHand.nil?
+      madeHands = markDrawHands(madeHands, madePairHands, straightStrength, flushStrength, twoCardHand) 
+    elsif madeHand == :quads_or_full_house
       madeHands = markHands(madePairHands, madeHands, twoCardHand)
     else
       madeHands = markMadeHand(madeHands, madeHand, twoCardHand)
     end
     madeHands
+  end
+
+  def madeHandInfo(twoCardHand, board)
+    [
+      PairEvaluator.evalPairHands(twoCardHand, board),
+      FlushEvaluator.evalFlush(twoCardHand, board),
+      StraightEvaluator.evalStraight(twoCardHand, board)
+    ]
+  end
+
+  def markDrawHands(madeHands, madePairHands, straightStrength, flushStrength, twoCardHand)
+      hasPair = true if madePairHands[:pair]
+      drawHands = madeDrawHands(straightStrength, flushStrength, hasPair)
+      madeHands = markHands(drawHands, madeHands, twoCardHand)
+      markHands(madePairHands, madeHands, twoCardHand)#ace high, overcards
+  end
+  
+  def bestMadeHand(flushStrength, straightStrength, madePairHands)
+    if (flushStrength == :flush && straightStrength == :straight)
+      :straight_flush
+    elsif (madePairHands[:quads] || madePairHands[:full_house])
+      :quads_or_full_house
+    elsif flushStrength == :flush
+      :flush
+    elsif straightStrength == :straight
+      :straight
+    end
   end
 
   def madeDrawHands(straightStrength, flushStrength, hasPair)
