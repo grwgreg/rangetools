@@ -1,7 +1,10 @@
-class RangeParser
+module RangeParser
+=begin
    attr_accessor :tagBuckets
    attr_accessor :rangeManager
+=end
 
+=begin
   def initialize(rangeManager)
     @rangeManager = rangeManager
     @tagBuckets = {
@@ -11,13 +14,19 @@ class RangeParser
       single: {}
     }
   end
+=end
 
   def parseRange(rangeString)
-    expandRangeTags(rangeString)
-    rangeManager.populateRange(self)
+    tagBuckets = {
+      suited: [],
+      offsuited: [],
+      both: [],
+      single: {}
+    }
+    expandRangeTags(rangeString, tagBuckets)
   end
 
-  def expandRangeTags(rangeString)
+  def expandRangeTags(rangeString, tagBuckets)
     rangeTags = rangeString.split(',')
     rangeTags.each do |rangeTag|
       rangeTag.strip!
@@ -27,27 +36,30 @@ class RangeParser
       else
         tags = expandRangeTag(rangeTag, tagType)
       end
-      addToTagBucket(tags, tagType)
+      tagBuckets = addToTagBucket(tags, tagType, tagBuckets)
     end
+    tagBuckets
   end
 
-  def addToTagBucket(tags, tagType)
+  def addToTagBucket(tags, tagType, tagBuckets)
     bucket = bucketType(tagType)
     if bucket == :single
       tag = tags[0]
-      addSingle(tag)
+      tagBuckets = addSingle(tag, tagBuckets)
     else
       tags.each do |tag|
-        @tagBuckets[bucket] << tag.slice(0,2).to_sym
+        tagBuckets[bucket] << tag.slice(0,2).to_sym
       end
     end
+    tagBuckets
   end
 
-  def addSingle(tag)
+  def addSingle(tag, tagBuckets)
     hand = tag.slice(0,2).to_sym
     suit = tag.slice(2,4).to_sym
     tagBuckets[:single][hand] ||= []
     tagBuckets[:single][hand] << suit
+    tagBuckets
   end
 
   def bucketType(tagType)

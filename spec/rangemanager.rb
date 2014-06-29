@@ -80,8 +80,21 @@ describe 'RangeManager' do
     @rangeManager.range[:"43"][:cc].should == false
     @rangeManager.range[:"43"][:cd].should == true
 
+=begin
     puts '----'
     puts @rangeManager.range.inspect
     puts '----'
+=end
+  end
+
+  it 'has populate range method' do
+    @rangeManager.range[:AK][:cc].should == false
+    @rangeManager.populateRange('AK, 87')
+    @rangeManager.range[:AK][:cc].should == true
+=begin
+    puts '----'
+    puts @rangeManager.range[:AK].inspect
+    puts '----'
+=end
   end
 end

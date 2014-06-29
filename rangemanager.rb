@@ -1,4 +1,7 @@
+require './rangeparser.rb'
+
 class RangeManager
+  include RangeParser
   attr_accessor :range
 
   def initialize
@@ -72,8 +75,8 @@ class RangeManager
     end
   end
 
-  def populateRange(rangeParser)
-    tagBuckets = rangeParser.tagBuckets
+  def populateRange(rangeString)
+    tagBuckets = parseRange(rangeString) 
     resetAll
     processTagBuckets(tagBuckets)
   end
