@@ -1,9 +1,11 @@
+require './handevaluator.rb'
+
 class RangeEvaluator
+  include HandEvaluator
   attr_accessor :board
   attr_accessor :madeHands #what to call this?
 
-  def initialize(handEvaluator, board)
-    @handEvaluator = handEvaluator
+  def initialize(board)
     @board = board
     @madeHands = {
       total: 0,
@@ -53,7 +55,7 @@ class RangeEvaluator
     twoCardHashes = allTwoCardHashes(rangeManager.range)
     twoCardHashes.each do |twoCardHand|
       @madeHands[:total] += 1
-      @madeHands = @handEvaluator.evalHand(@board, twoCardHand, @madeHands)
+      @madeHands = evalHand(@board, twoCardHand, @madeHands)
     end
   end
 

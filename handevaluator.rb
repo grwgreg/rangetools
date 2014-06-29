@@ -2,7 +2,7 @@ require('./pairevaluator.rb')
 require('./flushevaluator.rb')
 require('./straightevaluator.rb')
 
-class HandEvaluator
+module HandEvaluator
 
   def evalHand(board, twoCardHand, madeHands)
     madePairHands, flushStrength, straightStrength = madeHandInfo(twoCardHand, board)

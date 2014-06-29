@@ -3,10 +3,10 @@ require 'bundler/setup'
 require 'rspec'
 require '../handevaluator.rb'
 
-
 describe 'Hand Evaluator' do
   before(:each) do
-    @handEvaluator = HandEvaluator.new
+    @handEvaluator = Object.new
+    @handEvaluator.extend(HandEvaluator)
     @madeHands = {
       total: 0,
       straight_flush: [],

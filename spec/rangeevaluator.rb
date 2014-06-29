@@ -8,13 +8,12 @@ require 'ostruct'
 
 describe 'Range Evaluator' do
   before(:each) do
-    handEvaluator = HandEvaluator.new
     board = [
       {suit: :c, tag: :A, rank: 14},
       {suit: :h, tag: :J, rank: 11},
       {suit: :s, tag: :"3", rank: 3}
     ]
-    @rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
+    @rangeEvaluator = RangeEvaluator.new(board)
   end
 
   it 'has evaluateRange method' do
