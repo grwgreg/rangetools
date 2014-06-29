@@ -13,7 +13,7 @@ class RangeEvaluator
       premium_pocket: [],
       pair: [],
       straight: [],
-      straight_on_board: [],
+#      straight_on_board: [],
       oesd: [],
       doublegut: [],
       gutshot: [],
@@ -23,7 +23,7 @@ class RangeEvaluator
       pair_plus_flush_draw: [],
       flush: [],
       flush_draw: [],
-      flush_on_board: [],
+#      flush_on_board: [],
       flush_draw_on_board: [],
       two_pair: [],
       trips: [],
@@ -32,6 +32,9 @@ class RangeEvaluator
       pair_plus_oesd: [],
       pair_plus_gut: [],
       pair_plus_over: [],
+      oesd_on_board: [],
+      gutshot_on_board: [],
+      doublegut_on_board: [],
       combo_draw: [],
       ace_high: [],
       over_cards: [],
@@ -43,7 +46,6 @@ class RangeEvaluator
       top_pair: [],
       over_pair: [],
       pair_on_board: []
-
     }
   end
 

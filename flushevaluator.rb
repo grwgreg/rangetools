@@ -3,14 +3,10 @@ module FlushEvaluator
 
   def evalFlush(twoCardHand, board)
     fullHand, board = prepareForFlush(twoCardHand, board)
-    handStrength = flushStrength(fullHand)
-    boardStrength = flushStrength(board)
-    if handStrength == :flush
-      handStrength = :flush_on_board if boardStrength == :flush
-    elsif handStrength == :flush_draw
-      handStrength = :flush_draw_on_board if boardStrength == :flush_draw
-    end
-    handStrength
+    {
+      fullHand: flushStrength(fullHand),
+      board: flushStrength(board)
+    }
   end
 
   private

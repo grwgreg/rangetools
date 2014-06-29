@@ -153,7 +153,7 @@ describe 'Range Tools' do
     #rangeEvaluator.madeHands[:trips].length.should == 8
 #puts rangeEvaluator.madeHands
   end
-  it 'straight on board' do
+  it 'straight on board' do#doing away with this functionailty for now
     rangeManager = RangeManager.new
     rangeParser = RangeParser.new(rangeManager)
     handEvaluator = HandEvaluator.new
@@ -165,9 +165,57 @@ describe 'Range Tools' do
       {suit: :d, tag: :'6', rank: 9}
     ]
     rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
-    rangeParser.parseRange('AA')
+    rangeParser.parseRange('AKcs')
     rangeEvaluator.evaluateRange(rangeManager)
-    #rangeEvaluator.madeHands[:trips].length.should == 8
-puts rangeEvaluator.madeHands
+#    rangeEvaluator.madeHands[:straight_on_board].should include('AKcs') 
+  end
+  it 'flush draw  on board' do
+    rangeManager = RangeManager.new
+    rangeParser = RangeParser.new(rangeManager)
+    handEvaluator = HandEvaluator.new
+    board = [
+      {suit: :d, tag: :T, rank: 10},
+      {suit: :d, tag: :'8', rank: 8},
+      {suit: :c, tag: :'2', rank: 2},
+      {suit: :d, tag: :K, rank: 13},
+      {suit: :d, tag: :'6', rank: 9}
+    ]
+    rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
+    rangeParser.parseRange('A3cs')
+    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.madeHands[:flush_draw_on_board].should include('A3cs') 
+  end
+  it 'pair plus flushdraw' do
+    rangeManager = RangeManager.new
+    rangeParser = RangeParser.new(rangeManager)
+    handEvaluator = HandEvaluator.new
+    board = [
+      {suit: :c, tag: :T, rank: 10},
+      {suit: :c, tag: :'8', rank: 8},
+      {suit: :c, tag: :'7', rank: 7},
+      {suit: :h, tag: :A, rank: 14},
+      {suit: :d, tag: :'2', rank: 2}
+    ]
+    rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
+    rangeParser.parseRange('A4cs')
+    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.madeHands[:pair_plus_flush_draw].should include('A4cs') 
+
+  end
+  it 'straight draw on board' do
+    rangeManager = RangeManager.new
+    rangeParser = RangeParser.new(rangeManager)
+    handEvaluator = HandEvaluator.new
+    board = [
+      {suit: :c, tag: :T, rank: 10},
+      {suit: :s, tag: :'8', rank: 8},
+      {suit: :c, tag: :'7', rank: 7},
+      {suit: :c, tag: :'9', rank: 9},
+      {suit: :d, tag: :'2', rank: 2}
+    ]
+    rangeEvaluator = RangeEvaluator.new(handEvaluator, board)
+    rangeParser.parseRange('AKcs')
+    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.madeHands[:oesd_on_board].should include('AKcs') 
   end
 end

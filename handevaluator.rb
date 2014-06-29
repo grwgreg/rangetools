@@ -33,26 +33,30 @@ class HandEvaluator
   end
   
   def bestMadeHand(flushStrength, straightStrength, madePairHands)
-    if (flushStrength == :flush && straightStrength == :straight)
+    if (flushStrength[:fullHand] == :flush && straightStrength[:fullHand] == :straight)
       :straight_flush
     elsif (madePairHands[:quads] || madePairHands[:full_house])
       :quads_or_full_house
-    elsif flushStrength == :flush
+    elsif flushStrength[:fullHand] == :flush
       :flush
-    elsif straightStrength == :straight
+    elsif straightStrength[:fullHand] == :straight
       :straight
     end
   end
 
   def madeDrawHands(straightStrength, flushStrength, hasPair)
+    straight, straightBoard = straightStrength[:fullHand], straightStrength[:board]
+    flush, flushBoard = flushStrength[:fullHand], flushStrength[:board]
     hands = {
-      combo_draw: straightStrength && flushStrength,
-      pair_plus_flush_draw: hasPair && (flushStrength == :flush_draw)
+      combo_draw: straight && flush,
+      pair_plus_flush_draw: hasPair && (flush == :flush_draw),
+      flush_draw_on_board: flushBoard && flushBoard == :flush_draw
     }
-    pairPlusX = ('pair_plus_' + straightStrength.to_s).to_sym if straightStrength != :straight_on_board
-    hands[pairPlusX] = hasPair && straightStrength if straightStrength && pairPlusX
-    hands[flushStrength] = true if flushStrength
-    hands[straightStrength] = true if straightStrength
+    pairPlusX = ('pair_plus_' + straight.to_s).to_sym if straightBoard
+    hands[pairPlusX] = hasPair && straight if pairPlusX
+    hands[flush] = true if flush
+    hands[straight] = true if straight
+    hands[(straightBoard.to_s + '_on_board').to_sym] = true if straightBoard
     hands
   end
 

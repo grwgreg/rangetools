@@ -3,12 +3,10 @@ module StraightEvaluator
 
   def evalStraight(twoCardHand, board)
     fullHand, board = prepareForStraight(twoCardHand, board)
-    handStrength = straightStrength(fullHand)
-    if handStrength == :straight
-      boardStrength = straightStrength(board)
-      handStrength = :straight_on_board if boardStrength == :straight
-    end
-    handStrength
+    {
+      fullHand: straightStrength(fullHand),
+      board: straightStrength(board)
+    }
   end
 
   private

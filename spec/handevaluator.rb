@@ -19,6 +19,8 @@ describe 'Hand Evaluator' do
       oesd: [],
       doublegut: [],
       gutshot: [],
+      gutshot_on_board: [],
+      oesd_on_board: [],
       pair_plus_gutshot: [],
       pair_plus_oesd: [],
       pair_plus_doublegut: [],
@@ -101,21 +103,6 @@ describe 'Hand Evaluator' do
       ]
     result = @handEvaluator.evalHand(board, hand, @madeHands)
     result[:flush].should == ["AJhh"]
-  end
-  it 'evals flush on board' do
-    hand = [
-      {suit: :c, tag: :'J', rank: 11},
-      {suit: :c, tag: :'A', rank: 14}
-      ]
-    board = [
-      {suit: :h, tag: :T, rank: 10},
-      {suit: :h, tag: :K, rank: 13},
-      {suit: :h, tag: :"3", rank: 3},
-      {suit: :h, tag: :'J', rank: 11},
-      {suit: :h, tag: :'A', rank: 14}
-      ]
-    result = @handEvaluator.evalHand(board, hand, @madeHands)
-result[:flush_on_board].should == ["AJcc"]
   end
   it 'evals flush draw on board' do
     hand = [
