@@ -56,22 +56,11 @@ describe 'Range Tools' do
   it 'blalba' do
 
     @rangeManager.populateRange('AK, KJs, 99, QJ-6, T4-2s, 53o, 87-3o, 66-22')
-    @rangeEvaluator.evaluateRange(@rangeManager)
+    @rangeEvaluator.evaluateRange(@rangeManager.range)
 
    @rangeEvaluator.madeHands[:pocket_pair].should include('99cd')
    @rangeEvaluator.madeHands[:pocket_pair].should_not include('99cc')
   # puts @rangeEvaluator.madeHands
-  end
-
-  it 'blhehehehlba' do
-
-=begin
-    @rangeManager.populateRange('66-22')
-    @rangeEvaluator.evaluateRange(@rangeManager)
-  puts @rangeParser.tagBuckets
-   @rangeManager.range
-   @rangeEvaluator.madeHands
-=end
   end
 
   it 'A234 should be a gutshot' do
@@ -83,7 +72,7 @@ describe 'Range Tools' do
     ]
     rangeEvaluator = RangeEvaluator.new(board)
     rangeManager.populateRange('A4dd')
-    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:gutshot].should include('A4dd')
   end
 
@@ -97,7 +86,7 @@ describe 'Range Tools' do
     ]
     rangeEvaluator = RangeEvaluator.new(board)
     rangeManager.populateRange('43dd')
-    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:gutshot].should include('43dd')
   end
 
@@ -111,7 +100,7 @@ describe 'Range Tools' do
     ]
     rangeEvaluator = RangeEvaluator.new(board)
     rangeManager.populateRange('T3')
-    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:trips].length.should == 8
   end
   it 'is fun' do
@@ -123,7 +112,7 @@ describe 'Range Tools' do
     ]
     rangeEvaluator = RangeEvaluator.new(board)
     rangeManager.populateRange('AK-T, AA-22, KQ-T, QJ-8, JT-8, T9-7, 98-6, 87-5, 76-5,65ss,65dd')
-    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.evaluateRange(rangeManager.range)
     #rangeEvaluator.madeHands[:trips].length.should == 8
 #puts rangeEvaluator.madeHands
   end
@@ -136,7 +125,7 @@ describe 'Range Tools' do
     ]
     rangeEvaluator = RangeEvaluator.new(board)
     rangeManager.populateRange('AA')
-    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.evaluateRange(rangeManager.range)
     #rangeEvaluator.madeHands[:trips].length.should == 8
 #puts rangeEvaluator.madeHands
   end
@@ -151,7 +140,7 @@ describe 'Range Tools' do
     ]
     rangeEvaluator = RangeEvaluator.new(board)
     rangeManager.populateRange('AKcs')
-    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.evaluateRange(rangeManager.range)
 #    rangeEvaluator.madeHands[:straight_on_board].should include('AKcs') 
   end
   it 'flush draw  on board' do
@@ -165,7 +154,7 @@ describe 'Range Tools' do
     ]
     rangeEvaluator = RangeEvaluator.new(board)
     rangeManager.populateRange('A3cs')
-    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:flush_draw_on_board].should include('A3cs') 
   end
   it 'pair plus flushdraw' do
@@ -179,7 +168,7 @@ describe 'Range Tools' do
     ]
     rangeEvaluator = RangeEvaluator.new(board)
     rangeManager.populateRange('A4cs')
-    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:pair_plus_flush_draw].should include('A4cs') 
 
   end
@@ -194,7 +183,7 @@ describe 'Range Tools' do
     ]
     rangeEvaluator = RangeEvaluator.new(board)
     rangeManager.populateRange('AKcs')
-    rangeEvaluator.evaluateRange(rangeManager)
+    rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:oesd_on_board].should include('AKcs') 
   end
 end

@@ -40,9 +40,7 @@ describe 'Range Evaluator' do
       }
     }
   
-    double = OpenStruct.new(:range => range)
-
-  @rangeEvaluator.evaluateRange(double)
+  @rangeEvaluator.evaluateRange(range)
   puts @rangeEvaluator.madeHands
   end
 

@@ -1,20 +1,4 @@
 module RangeParser
-=begin
-   attr_accessor :tagBuckets
-   attr_accessor :rangeManager
-=end
-
-=begin
-  def initialize(rangeManager)
-    @rangeManager = rangeManager
-    @tagBuckets = {
-      suited: [],
-      offsuited: [],
-      both: [],
-      single: {}
-    }
-  end
-=end
 
   def parseRange(rangeString)
     tagBuckets = {
