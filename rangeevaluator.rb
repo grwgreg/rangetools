@@ -29,7 +29,7 @@ class RangeEvaluator
       flush_draw_on_board: [],
       two_pair: [],
       trips: [],
-      set: [],
+#      set: [],
       full_house: [],
       pair_plus_oesd: [],
       pair_plus_gut: [],
@@ -56,6 +56,25 @@ class RangeEvaluator
     twoCardHashes.each do |twoCardHand|
       @madeHands[:total] += 1
       @madeHands = evalHand(@board, twoCardHand, @madeHands)
+    end
+  end
+
+  def rangeReport
+    statistics.each_with_object({}) do |hands,report|
+      hand_type = hands[0]
+      report[hand_type] = {
+        percent: hands[1],
+        hands: @madeHands[hand_type]
+      }
+    end
+  end
+
+  def statistics
+    total = @madeHands[:total].to_f
+    @madeHands.each_with_object({}) do |made,stats|
+      count = made[1].kind_of?(Array) ? made[1].length : 0
+      next unless count > 0 && made[0] != :total
+      stats[made[0]] = count.to_f / total 
     end
   end
 

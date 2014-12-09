@@ -9,39 +9,56 @@ require 'ostruct'
 describe 'Range Evaluator' do
   before(:each) do
     board = [
-      {suit: :c, tag: :A, rank: 14},
+      {suit: :h, tag: :A, rank: 14},
       {suit: :h, tag: :J, rank: 11},
-      {suit: :s, tag: :"3", rank: 3}
+      {suit: :h, tag: :"3", rank: 3}
     ]
     @rangeEvaluator = RangeEvaluator.new(board)
-  end
-
-  it 'has evaluateRange method' do
-    range = {
+    @range = {
       AA: {
         cc: true,
-        cd: false,
-        cs: false
       },
       JT: {
-        cd: false,
-        cs: false,
-        dd: true
+        cd: true,
+        cs: true,
+        dd: true,
       },
       KT: {
-        cd: false,
-        cs: false,
-        dd: false
+        cd: true,
+        cs: true,
+        dd: true
       },
       :'93' => {
         cd: false,
         hc: true,
-        cs: false
+        cs: false,
+        ss: true
+      },
+      :'45' => {
+        hh: true
       }
     }
-  
-  @rangeEvaluator.evaluateRange(range)
-  puts @rangeEvaluator.madeHands
+  end
+
+  it 'has evaluateRange method' do
+    @rangeEvaluator.evaluateRange(@range)
+  end
+
+  its 'statistics method loops through and builds hash with percents of hand type' do
+    @rangeEvaluator.evaluateRange(@range)
+    @rangeEvaluator.statistics
+  end
+
+  its 'range report is hash to turn to json and serve' do
+    @rangeEvaluator.evaluateRange(@range)
+    puts @rangeEvaluator.rangeReport
+    report = @rangeEvaluator.rangeReport
+  #there are 10 total hands in range so 3 made hands is .3 etc
+    report[:trips][:percent].should == 0.1
+    report[:trips][:hands].should == ['AAcc'] 
+
+    report[:high_pair].should == {:percent=>0.3, :hands=>["JTcd", "JTcs", "JTdd"]}
+    
   end
 
 end

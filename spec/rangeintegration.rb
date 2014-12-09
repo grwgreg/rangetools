@@ -186,4 +186,18 @@ describe 'Range Tools' do
     rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:oesd_on_board].should include('AKcs') 
   end
+  it 'is fun to playwith' do
+    rangeManager = RangeManager.new
+    board = [
+      {suit: :c, tag: :T, rank: 10},
+      {suit: :s, tag: :'8', rank: 8},
+      {suit: :c, tag: :'A', rank: 14},
+      {suit: :c, tag: :'9', rank: 9},
+      {suit: :d, tag: :'2', rank: 2}
+    ]
+    rangeEvaluator = RangeEvaluator.new(board)
+    rangeManager.populateRange('AAds, Q9-2ss')
+    rangeEvaluator.evaluateRange(rangeManager.range)
+puts rangeEvaluator.madeHands
+  end
 end
