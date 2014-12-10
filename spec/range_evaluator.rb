@@ -63,7 +63,29 @@ describe 'Range Evaluator' do
 
   it 'builds card hashes from string of board cards' do
     
-    puts @rangeEvaluator.buildBoard('Ks,9h,2c')
+    @rangeEvaluator.buildBoard('Ks,9h,2c,Ts').should == [
+{:tag=>"K", :rank=>13, :suit=>"s"},
+{:tag=>"9", :rank=>9, :suit=>"h"},
+{:tag=>"2", :rank=>2, :suit=>"c"},
+{:tag=>"T", :rank=>10, :suit=>"s"}
+    ]
+
+    
+  end
+
+  it 'builds board when instantiated with string' do
+    
+
+    board = 'Ks,9h,2c,Ts'
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
+
+    rangeEvaluator.board.should == [
+    {:tag=>"K", :rank=>13, :suit=>"s"},
+    {:tag=>"9", :rank=>9, :suit=>"h"},
+    {:tag=>"2", :rank=>2, :suit=>"c"},
+    {:tag=>"T", :rank=>10, :suit=>"s"}
+    ]
+    
   end
 
 end
