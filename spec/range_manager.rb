@@ -1,12 +1,12 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require '../rangemanager.rb'
+require '../range_manager.rb'
 
 
-describe 'RangeManager' do
+describe 'RangeTools::RangeManager' do
   before(:each) do
-    @rangeManager = RangeManager.new
+    @rangeManager = RangeTools::RangeManager.new
   end
   it 'has build range method called during init' do
     @rangeManager.range.length.should == 91

@@ -1,12 +1,12 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require '../handevaluator.rb'
+require '../hand_evaluator.rb'
 
 describe 'Hand Evaluator' do
   before(:each) do
     @handEvaluator = Object.new
-    @handEvaluator.extend(HandEvaluator)
+    @handEvaluator.extend(RangeTools::HandEvaluator)
     @madeHands = {
       total: 0,
       straight_flush: [],

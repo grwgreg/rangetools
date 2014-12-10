@@ -1,22 +1,22 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require '../rangemanager.rb'
-require '../rangeevaluator.rb'
-require '../handevaluator.rb'
-require '../pairevaluator.rb'
+require '../range_manager.rb'
+require '../range_evaluator.rb'
+require '../hand_evaluator.rb'
+require '../pair_evaluator.rb'
 
 
 describe 'Range Tools' do
   before(:each) do
-    @rangeManager = RangeManager.new
+    @rangeManager = RangeTools::RangeManager.new
 
     board = [
       {suit: :c, tag: :A, rank: 14},
       {suit: :s, tag: :J, rank: 11},
       {suit: :s, tag: :"3", rank: 3}
     ]
-    @rangeEvaluator = RangeEvaluator.new(board)
+    @rangeEvaluator = RangeTools::RangeEvaluator.new(board)
   end
   it 'rangeparser parses raneg and populates range object' do
     @rangeManager.range[:AK][:cc].should == false
@@ -64,73 +64,73 @@ describe 'Range Tools' do
   end
 
   it 'A234 should be a gutshot' do
-    rangeManager = RangeManager.new
+    rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :K, rank: 13},
       {suit: :s, tag: :'3', rank: 3},
       {suit: :s, tag: :'2', rank: 2}
     ]
-    rangeEvaluator = RangeEvaluator.new(board)
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('A4dd')
     rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:gutshot].should include('A4dd')
   end
 
   it 'AKQJ should be a gutshot' do
-    rangeManager = RangeManager.new
+    rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :A, rank: 14},
       {suit: :s, tag: :K, rank: 13},
       {suit: :s, tag: :Q, rank: 12},
       {suit: :s, tag: :J, rank: 11}
     ]
-    rangeEvaluator = RangeEvaluator.new(board)
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('43dd')
     rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:gutshot].should include('43dd')
   end
 
   it 'Removes board cards from range' do
-    rangeManager = RangeManager.new
+    rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :A, rank: 14},
       {suit: :s, tag: :'2', rank: 2},
       {suit: :s, tag: :'3', rank: 3},
       {suit: :c, tag: :'3', rank: 3}
     ]
-    rangeEvaluator = RangeEvaluator.new(board)
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('T3')
     rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:trips].length.should == 8
   end
   it 'is fun' do
-    rangeManager = RangeManager.new
+    rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :A, rank: 14},
       {suit: :s, tag: :'7', rank: 7},
       {suit: :c, tag: :'3', rank: 3}
     ]
-    rangeEvaluator = RangeEvaluator.new(board)
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('AK-T, AA-22, KQ-T, QJ-8, JT-8, T9-7, 98-6, 87-5, 76-5,65ss,65dd')
     rangeEvaluator.evaluateRange(rangeManager.range)
     #rangeEvaluator.madeHands[:trips].length.should == 8
 #puts rangeEvaluator.madeHands
   end
   it 'fullhouses work' do
-    rangeManager = RangeManager.new
+    rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :A, rank: 14},
       {suit: :s, tag: :'7', rank: 7},
       {suit: :c, tag: :'7', rank: 7}
     ]
-    rangeEvaluator = RangeEvaluator.new(board)
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('AA')
     rangeEvaluator.evaluateRange(rangeManager.range)
     #rangeEvaluator.madeHands[:trips].length.should == 8
 #puts rangeEvaluator.madeHands
   end
   it 'straight on board' do#doing away with this functionailty for now
-    rangeManager = RangeManager.new
+    rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :T, rank: 10},
       {suit: :s, tag: :'8', rank: 8},
@@ -138,13 +138,13 @@ describe 'Range Tools' do
       {suit: :c, tag: :'9', rank: 6},
       {suit: :d, tag: :'6', rank: 9}
     ]
-    rangeEvaluator = RangeEvaluator.new(board)
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('AKcs')
     rangeEvaluator.evaluateRange(rangeManager.range)
 #    rangeEvaluator.madeHands[:straight_on_board].should include('AKcs') 
   end
   it 'flush draw  on board' do
-    rangeManager = RangeManager.new
+    rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :d, tag: :T, rank: 10},
       {suit: :d, tag: :'8', rank: 8},
@@ -152,13 +152,13 @@ describe 'Range Tools' do
       {suit: :d, tag: :K, rank: 13},
       {suit: :d, tag: :'6', rank: 9}
     ]
-    rangeEvaluator = RangeEvaluator.new(board)
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('A3cs')
     rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:flush_draw_on_board].should include('A3cs') 
   end
   it 'pair plus flushdraw' do
-    rangeManager = RangeManager.new
+    rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :T, rank: 10},
       {suit: :c, tag: :'8', rank: 8},
@@ -166,14 +166,14 @@ describe 'Range Tools' do
       {suit: :h, tag: :A, rank: 14},
       {suit: :d, tag: :'2', rank: 2}
     ]
-    rangeEvaluator = RangeEvaluator.new(board)
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('A4cs')
     rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:pair_plus_flush_draw].should include('A4cs') 
 
   end
   it 'straight draw on board' do
-    rangeManager = RangeManager.new
+    rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :T, rank: 10},
       {suit: :s, tag: :'8', rank: 8},
@@ -181,13 +181,13 @@ describe 'Range Tools' do
       {suit: :c, tag: :'9', rank: 9},
       {suit: :d, tag: :'2', rank: 2}
     ]
-    rangeEvaluator = RangeEvaluator.new(board)
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('AKcs')
     rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:oesd_on_board].should include('AKcs') 
   end
-  it 'is fun to playwith' do
-    rangeManager = RangeManager.new
+  it 'can create range report from start' do
+    rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :T, rank: 10},
       {suit: :s, tag: :'8', rank: 8},
@@ -195,9 +195,15 @@ describe 'Range Tools' do
       {suit: :c, tag: :'9', rank: 9},
       {suit: :d, tag: :'2', rank: 2}
     ]
-    rangeEvaluator = RangeEvaluator.new(board)
-    rangeManager.populateRange('AAds, Q9-2ss')
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
+    rangeManager.populateRange('AK-Ts, AA-JJ, KQs, AK-Jo')
     rangeEvaluator.evaluateRange(rangeManager.range)
-puts rangeEvaluator.madeHands
+x =  rangeEvaluator.rangeReport.collect do |el|
+  el.delete(:hands)
+  el
+end
+puts '________________'
+puts x
+puts '________________'
   end
 end

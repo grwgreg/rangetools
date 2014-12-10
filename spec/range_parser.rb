@@ -1,13 +1,16 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require '../rangeparser.rb'
+require '../range_parser.rb'
+require '../range_manager.rb'
 
-class RangeManager
-  include RangeParser
+module RangeTools
+  class RangeManager
+    include RangeParser
+  end
 end
 
-rangeManager = RangeManager.new
+rangeManager = RangeTools::RangeManager.new
 
 describe 'RangeParser module' do
   it 'parses range returns tag buckets' do

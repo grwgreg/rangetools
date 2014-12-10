@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require '../flushevaluator.rb'
+require '../flush_evaluator.rb'
 
 
 describe 'Flush Evaluator' do
@@ -15,10 +15,11 @@ describe 'Flush Evaluator' do
       {suit: :h, tag: :J, rank: 11},
       {suit: :s, tag: :"3", rank: 3}
       ]
+    @flushEvaluator = RangeTools::FlushEvaluator
   end
 
   it 'has class method evalFlush' do
-    FlushEvaluator.evalFlush(@hand, @board)[:fullHand].should == nil
+    @flushEvaluator.evalFlush(@hand, @board)[:fullHand].should == nil
     @hand = [
       {suit: :h, tag: :'J', rank: 11},
       {suit: :h, tag: :'A', rank: 14}
@@ -28,7 +29,7 @@ describe 'Flush Evaluator' do
       {suit: :h, tag: :J, rank: 11},
       {suit: :h, tag: :"3", rank: 3}
       ]
-   FlushEvaluator.evalFlush(@hand, @board)[:fullHand].should == :flush_draw 
+   @flushEvaluator.evalFlush(@hand, @board)[:fullHand].should == :flush_draw 
     @hand = [
       {suit: :h, tag: :'J', rank: 11},
       {suit: :h, tag: :'A', rank: 14}
@@ -38,7 +39,7 @@ describe 'Flush Evaluator' do
       {suit: :h, tag: :J, rank: 11},
       {suit: :h, tag: :"3", rank: 3}
       ]
-   FlushEvaluator.evalFlush(@hand, @board)[:fullHand].should == :flush 
+   @flushEvaluator.evalFlush(@hand, @board)[:fullHand].should == :flush 
   end
 
   it 'returns flush on board if on board' do
@@ -53,7 +54,7 @@ describe 'Flush Evaluator' do
       {suit: :c, tag: :J, rank: 11},
       {suit: :c, tag: :"3", rank: 3}
       ]
-   FlushEvaluator.evalFlush(@hand, @board)[:board].should == :flush
+   @flushEvaluator.evalFlush(@hand, @board)[:board].should == :flush
     @hand = [
       {suit: :h, tag: :'J', rank: 11},
       {suit: :h, tag: :'A', rank: 14}
@@ -65,6 +66,6 @@ describe 'Flush Evaluator' do
       {suit: :c, tag: :J, rank: 11},
       {suit: :s, tag: :"3", rank: 3}
       ]
-   FlushEvaluator.evalFlush(@hand, @board)[:board].should == :flush_draw
+   @flushEvaluator.evalFlush(@hand, @board)[:board].should == :flush_draw
   end
 end

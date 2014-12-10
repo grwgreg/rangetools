@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require '../pairevaluator.rb'
+require '../pair_evaluator.rb'
 
 
 describe 'pairevaluator' do
@@ -18,7 +18,7 @@ describe 'pairevaluator' do
       {suit: :h, tag: :T, rank: 10},
       {suit: :h, tag: :T, rank: 10}
       ]
-    x = PairEvaluator.evalPairHands(hand, board)
+    x = RangeTools::PairEvaluator.evalPairHands(hand, board)
 puts 'xxxxxxxxx'
 puts x
 puts 'xxxxxxxxx'
