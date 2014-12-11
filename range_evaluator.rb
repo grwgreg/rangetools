@@ -45,7 +45,28 @@ module RangeTools
     attr_accessor :madeHands
 
     def initialize(board)
-      @board = board
+      @board = buildBoard(board)
+      @draws = {
+        oesd: [],
+        doublegut: [],
+        gutshot: [],
+        pair_plus_gutshot: [],
+        pair_plus_oesd: [],
+        pair_plus_doublegut: [],
+        pair_plus_flush_draw: [],
+        flush_draw: [],
+        flush_draw_on_board: [],
+        pair_plus_oesd: [],
+        pair_plus_gut: [],
+        pair_plus_over: [],
+        oesd_on_board: [],
+        gutshot_on_board: [],
+        doublegut_on_board: [],
+        combo_draw: [],
+        over_cards: [],
+        one_over_card: [],
+        premium_overs: [],
+      }
       @madeHands = {
         total: 0,
         straight_flush: [],
@@ -54,52 +75,34 @@ module RangeTools
         premium_pocket: [],
         pair: [],
         straight: [],
-        #      straight_on_board: [],
-        oesd: [],
-        doublegut: [],
-        gutshot: [],
-        pair_plus_gutshot: [],
-        pair_plus_oesd: [],
-        pair_plus_doublegut: [],
-        pair_plus_flush_draw: [],
         flush: [],
-        flush_draw: [],
-        #      flush_on_board: [],
-        flush_draw_on_board: [],
         two_pair: [],
         trips: [],
-        #      set: [],
         full_house: [],
-        pair_plus_oesd: [],
-        pair_plus_gut: [],
-        pair_plus_over: [],
-        oesd_on_board: [],
-        gutshot_on_board: [],
-        doublegut_on_board: [],
-        combo_draw: [],
         ace_high: [],
-        over_cards: [],
-        one_over_card: [],
-        premium_overs: [],
         mid_pair: [],
         high_pair: [],
         low_pair: [],
         top_pair: [],
         over_pair: [],
         pair_on_board: []
-      }
+      }.merge(@draws)
     end
 
-    def buildBoard(boardString)
+    def buildBoard(board)
       #should there be some validation???
       #just wrap in a try?
-      boardString.split(',').map do |tag| 
-        card = tag.split('')
-        {
-          tag: card[0],
-          rank: rankNumber(card[0].to_sym),
-          suit: card[1]
-        }
+      if board.is_a? String
+        board.split(',').map do |tag| 
+          card = tag.split('')
+          {
+            tag: card[0].to_sym,
+            rank: rankNumber(card[0].to_sym),
+            suit: card[1]
+          }
+        end
+      elsif board.is_a? Array
+        board
       end
     end
 
@@ -125,7 +128,8 @@ module RangeTools
       total = @madeHands[:total].to_f
       @madeHands.each_with_object({}) do |made,stats|
         count = made[1].kind_of?(Array) ? made[1].length : 0
-        next unless count > 0 && made[0] != :total
+        next if made[0] == :total
+        next if @board.length == 5 && @draws.has_key?(made[0])
         stats[made[0]] = count.to_f / total 
       end
     end
