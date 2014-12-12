@@ -1,43 +1,5 @@
 require './hand_evaluator.rb'
 
-=begin
-how to organize this for charts?
-
-fullhouse+
-  full house
-  quads
-  straight flush
-flush
-straight
-trips
-two pair
-pair plus draw
-  plus flushd
-  plus doublegut
-  plus oesd
-  plus gutshot
-  plus overcard
-  
-pair breakdown:
-  pocket_pair
-  premium_pocket
-  mid,high,low,top,over
-
-good draw
-weak draw
-  put all draws in 1 graph
-  combo draw
-  flush d
-  oesd
-  doublegut
-  gut
-ace high
-overcard/s
-  premium overs
-  over cards
-  one over
-=end
-
 module RangeTools
   class RangeEvaluator
     include HandEvaluator

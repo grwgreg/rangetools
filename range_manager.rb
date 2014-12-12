@@ -101,5 +101,45 @@ module RangeTools
         bucket.each { |tag| send(setter, tag) }
       end
     end
+
+
+    def allSet?(hand, type)
+      hands = handCombosByType(hand,type)
+      hands.all? do |combo, set|
+        set 
+      end
+    end 
+
+    def anySet?(hand, type)
+      hands = handCombosByType(hand,type)
+      hands.any? do |combo, set|
+        set 
+      end
+    end 
+
+    def getSetCombos(hand, type)
+      hands = handCombosByType(hand,type)
+      hands.select do |combo, set|
+        set 
+      end.keys
+    end 
+
+    def handCombosByType(hand,type)
+      hands = @range[hand]
+      if type == :offsuits 
+        hands = hands.select do |combo,v| 
+          (combos.keys - [:cc, :dd, :hh, :ss]).include?(combo)
+        end
+      elsif type == :suits
+        hands = hands.select do |combo,v| 
+          [:cc, :dd, :hh, :ss].include?(combo)
+        end
+      end
+      hands
+    end
+
+
+
+
   end
 end
