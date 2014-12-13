@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require '../hand_groups.rb'
-require '../range_manager.rb'
+require './hand_groups.rb'
+require './range_manager.rb'
 
 #one day i'll learn rspec for real
 HandGroup = Struct.new('HandGroup', :hands) do
@@ -54,6 +54,17 @@ describe 'Hand Groups' do
 
   it 'has to_s method' do
     @hg.to_s.should == 'Q9-4,QJs,Q2cc,Q2sc,Q2sh'
+  end
+
+  it 'groups pairs' do
+    @rangeManager = RangeTools::RangeManager.new
+    @rangeManager.populateRange('Q9-4,Q2sc,Q2cc,88,99,33')
+    @col = "AA KK QQ JJ TT 99 88 77 66 55 44 33 22".split(' ')
+    @hg = RangeTools::HandGroups.new(@col, @rangeManager)
+
+#puts @hg.groups.map{|g| g.hands }.inspect
+
+
   end
 
 end

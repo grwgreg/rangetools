@@ -8,6 +8,11 @@ module RangeTools
       @singles = hands[0].length == 4
     end
 
+    def setType(type)
+      @typeString = getTypeString(type)
+      self
+    end
+
     def getTypeString(type)
       {
         suits: 's',

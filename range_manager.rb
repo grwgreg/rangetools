@@ -1,7 +1,9 @@
 require './range_parser.rb'
+require './range_formatter.rb'
 
 module RangeTools
   class RangeManager
+    include RangeFormatter
     include RangeParser
     attr_accessor :range
 
@@ -125,6 +127,7 @@ module RangeTools
     end 
 
     def handCombosByType(hand,type)
+      type = :pair if isPair(hand)
       hands = @range[hand]
       if type == :offsuits 
         hands = hands.select do |combo,v| 
@@ -136,6 +139,11 @@ module RangeTools
         end
       end
       hands
+    end
+
+    def isPair(hand)
+      hand = hand.to_s
+      hand[0] == hand[1]
     end
 
 
