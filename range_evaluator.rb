@@ -77,6 +77,7 @@ module RangeTools
     end
 
     def rangeReport(rangeManager)
+      addExtraHandTypes
       statistics.each_with_object({}) do |hands,report|
         hand_type = hands[0]
         report[hand_type] = {
@@ -85,6 +86,23 @@ module RangeTools
           handRange: rangeString(rangeManager,@madeHands[hand_type])
         }
       end
+    end
+
+    def addExtraHandTypes
+        {
+        fullHousePlus: [:full_house, :quads, :straight_flush],
+        draws: [:combo_draw, :flush_draw, :oesd, :doublegut, :gutshot],
+        overcards: [:ace_high, :premium_overs, :over_cards, :one_over_card]
+        }.each_pair do |newLabel,handTypes|
+          @madeHands[newLabel] = mergeHandArrays(handTypes)    
+        end
+    end
+
+    def mergeHandArrays(handTypes)
+      handTypes.reduce([]) do |m, handType|
+        m += @madeHands[handType] unless @board.length == 5 && @draws.has_key?(handType)
+        m
+      end.uniq
     end
 
     def rangeString(rangeManager, singles)

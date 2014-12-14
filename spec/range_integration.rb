@@ -182,7 +182,25 @@ describe 'Range Tools' do
     rangeEvaluator.evaluateRange(rangeManager.range)
     x =  rangeEvaluator.rangeReport(rangeManager)
     #x.keys.index(:oesd).should be_nil
-#puts x.inspect
+    x[:straight_flush][:handRange].should == 'AJcc'
+    x.keys.index(:oesd).should be_nil
+require 'json'
+puts x.to_json
+  end
+  it 'adds extra entries to madehands for combination hand types ie all draws' do
+    rangeManager = RangeTools::RangeManager.new
+    board = [
+      {suit: :c, tag: :T, rank: 10},
+      {suit: :s, tag: :'8', rank: 8},
+      {suit: :c, tag: :'7', rank: 7},
+      {suit: :c, tag: :'9', rank: 9},
+      {suit: :d, tag: :'2', rank: 2}
+    ]
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
+    rangeManager.populateRange('AK-Ts, AA-JJ, KQs, AK-Jo')
+    rangeEvaluator.evaluateRange(rangeManager.range)
+    x =  rangeEvaluator.rangeReport(rangeManager)
+    x[:overcards][:handRange].should == 'AKdd,AKhh,AKss,AQdd,AQhh,AQss,AK-Qo'
   end
   it 'range report returns handrange' do
     rangeManager = RangeTools::RangeManager.new
@@ -190,9 +208,11 @@ describe 'Range Tools' do
     rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('AK-2s, AA-TT, KQ, AK-To, QJ-Ts, JT-9s')
     rangeEvaluator.evaluateRange(rangeManager.range)
-#puts rangeManager.range.inspect
     
     x =  rangeEvaluator.rangeReport(rangeManager)
-puts x.inspect
+    x[:mid_pair][:hands].should == ["A7cc", "A7dd", "A7hh", "A7ss"]
+    x[:mid_pair][:handRange].should == "A7s"
+require 'json'
+#puts x.to_json
   end
 end
