@@ -71,11 +71,7 @@ module RangeTools
     end
 
     def resetAll
-      range.each_pair do |tag, combos|
-        combos.each_key do |combo|
-          range[tag][combo] = false
-        end
-      end
+      @range = buildRange
     end
 
     def populateRange(rangeString)

@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require '../range_manager.rb'
+require './range_manager.rb'
 
 
 describe 'RangeTools::RangeManager' do
@@ -57,6 +57,15 @@ describe 'RangeTools::RangeManager' do
     @rangeManager.range[:AA][:cs].should == true
     @rangeManager.range[:K3][:cs].should == true
 
+=begin
+puts 'rangebefore'
+puts @rangeManager.range
+puts 'rangebefore'
+    @rangeManager.resetAll
+puts 'rangebafter'
+puts @rangeManager.range
+puts 'rangebeafter'
+=end
     @rangeManager.resetAll
     @rangeManager.range[:AA][:cs].should == false
     @rangeManager.range[:K3][:cs].should == false

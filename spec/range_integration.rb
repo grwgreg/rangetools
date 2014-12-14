@@ -1,10 +1,10 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require '../range_manager.rb'
-require '../range_evaluator.rb'
-require '../hand_evaluator.rb'
-require '../pair_evaluator.rb'
+require './range_manager.rb'
+require './range_evaluator.rb'
+require './hand_evaluator.rb'
+require './pair_evaluator.rb'
 
 
 describe 'Range Tools' do
@@ -180,10 +180,19 @@ describe 'Range Tools' do
     rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('AK-Ts, AA-JJ, KQs, AK-Jo')
     rangeEvaluator.evaluateRange(rangeManager.range)
-    x =  rangeEvaluator.rangeReport
+    x =  rangeEvaluator.rangeReport(rangeManager)
+    #x.keys.index(:oesd).should be_nil
+#puts x.inspect
+  end
+  it 'range report returns handrange' do
+    rangeManager = RangeTools::RangeManager.new
+    board = 'Kc,Qc,7s'
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
+    rangeManager.populateRange('AK-2s, AA-TT, KQ, AK-To, QJ-Ts, JT-9s')
+    rangeEvaluator.evaluateRange(rangeManager.range)
+#puts rangeManager.range.inspect
+    
+    x =  rangeEvaluator.rangeReport(rangeManager)
 puts x.inspect
-puts 'dddddddddd'
-puts x[:oesd]
-puts 'dddddddddd'
   end
 end

@@ -76,14 +76,21 @@ module RangeTools
       end
     end
 
-    def rangeReport
+    def rangeReport(rangeManager)
       statistics.each_with_object({}) do |hands,report|
         hand_type = hands[0]
         report[hand_type] = {
           percent: hands[1],
-          hands: @madeHands[hand_type]
+          hands: @madeHands[hand_type],
+          handRange: rangeString(rangeManager,@madeHands[hand_type])
         }
       end
+    end
+
+    def rangeString(rangeManager, singles)
+      rangeManager.resetAll
+      rangeManager.populateRange(singles.join(','))
+      rangeManager.formatRange
     end
 
     def statistics
