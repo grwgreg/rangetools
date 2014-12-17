@@ -82,18 +82,42 @@ module RangeTools
         hand_type = hands[0]
         report[hand_type] = {
           percent: hands[1],
+          percent_of_group: percent_of_group(hand_type),
           hands: @madeHands[hand_type],
           handRange: rangeString(rangeManager,@madeHands[hand_type])
         }
       end
     end
 
-    def addExtraHandTypes
-        {
-        fullHousePlus: [:full_house, :quads, :straight_flush],
+    def percent_of_group(hand_type)
+      found_group = findGroup(hand_type)
+      return 0 if found_group.nil?
+      total = @madeHands[found_group].length
+      return 0 if total.zero?
+      hand_count = @madeHands[hand_type].length
+      hand_count.to_f / total.to_f
+    end
+   
+    def findGroup(hand_type)
+      found_group = nil
+      extraHandTypes.each_pair do |group,group_types|
+        found_group = group if group_types.include?(hand_type)
+      end
+      found_group = :pair if [:pocket_pair, :premium_pocket, :mid_pair, :high_pair, :low_pair, :top_pair, :over_pair, :pair_on_board].include?(hand_type)
+      found_group
+    end
+
+    def extraHandTypes
+      {
+        full_house_plus: [:full_house, :quads, :straight_flush],
         draws: [:combo_draw, :flush_draw, :oesd, :doublegut, :gutshot],
+        pair_plus_draw: [:pair_plus_gutshot, :pair_plus_oesd, :pair_plus_flush_draw, :pair_plus_over],
         overcards: [:ace_high, :premium_overs, :over_cards, :one_over_card]
-        }.each_pair do |newLabel,handTypes|
+      }
+    end
+
+    def addExtraHandTypes
+        extraHandTypes.each_pair do |newLabel,handTypes|
           @madeHands[newLabel] = mergeHandArrays(handTypes)    
         end
     end
@@ -114,11 +138,16 @@ module RangeTools
     def statistics
       total = @madeHands[:total].to_f
       @madeHands.each_with_object({}) do |made,stats|
-        count = made[1].kind_of?(Array) ? made[1].length : 0
         next if made[0] == :total
         next if @board.length == 5 && @draws.has_key?(made[0])
-        stats[made[0]] = count.to_f / total 
+        addStat(stats,made,total)
       end
+    end
+
+    def addStat(stats,made,total)
+        hand_label, hands = made[0],made[1]
+        count = hands.kind_of?(Array) ? hands.length : 0
+        stats[hand_label] = count.to_f / total 
     end
 
     def allTwoCardHashes(range)

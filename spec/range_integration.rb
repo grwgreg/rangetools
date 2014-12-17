@@ -5,6 +5,7 @@ require './range_manager.rb'
 require './range_evaluator.rb'
 require './hand_evaluator.rb'
 require './pair_evaluator.rb'
+require 'json'
 
 
 describe 'Range Tools' do
@@ -184,8 +185,7 @@ describe 'Range Tools' do
     #x.keys.index(:oesd).should be_nil
     x[:straight_flush][:handRange].should == 'AJcc'
     x.keys.index(:oesd).should be_nil
-require 'json'
-puts x.to_json
+#puts x.to_json
   end
   it 'adds extra entries to madehands for combination hand types ie all draws' do
     rangeManager = RangeTools::RangeManager.new
@@ -212,7 +212,16 @@ puts x.to_json
     x =  rangeEvaluator.rangeReport(rangeManager)
     x[:mid_pair][:hands].should == ["A7cc", "A7dd", "A7hh", "A7ss"]
     x[:mid_pair][:handRange].should == "A7s"
-require 'json'
-#puts x.to_json
+  end
+  it 'range report includes percent of group' do
+    rangeManager = RangeTools::RangeManager.new
+    board = 'Kc,Qc,7s'
+    rangeEvaluator = RangeTools::RangeEvaluator.new(board)
+    rangeManager.populateRange('AK-2s, AA-TT, KQ, AK-To, QJ-Ts, JT-9s')
+    rangeEvaluator.evaluateRange(rangeManager.range)
+    
+    x =  rangeEvaluator.rangeReport(rangeManager)
+    x[:oesd][:percent_of_group].should == 0.1
+puts x.to_json
   end
 end
