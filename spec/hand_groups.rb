@@ -4,9 +4,8 @@ require 'rspec'
 require './hand_groups.rb'
 require './range_manager.rb'
 
-#one day i'll learn rspec for real
 HandGroup = Struct.new('HandGroup', :hands) do
- def setType(_)
+  def setType(_)
     self
   end
 end
@@ -62,8 +61,7 @@ describe 'Hand Groups' do
     @col = "AA KK QQ JJ TT 99 88 77 66 55 44 33 22".split(' ')
     @hg = RangeTools::HandGroups.new(@col, @rangeManager)
 
-#puts @hg.groups.map{|g| g.hands }.inspect
-
+    puts @hg.groups.map{|g| g.hands }.should == [["99", "88"], ["33"]]
 
   end
 

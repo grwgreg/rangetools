@@ -60,7 +60,7 @@ module RangeTools
           {
             tag: card[0].to_sym,
             rank: rankNumber(card[0].to_sym),
-            suit: card[1]
+            suit: card[1].to_sym
           }
         end
       elsif board.is_a? Array
@@ -93,7 +93,7 @@ module RangeTools
       found_group = findGroup(hand_type)
       return 0 if found_group.nil?
       total = @madeHands[found_group].length
-      return 0 if total.zero?
+      return 0 if total.zero?#todo maybe throw error or remove line, don't think we can reach this point if no hands in group?
       hand_count = @madeHands[hand_type].length
       hand_count.to_f / total.to_f
     end
@@ -147,7 +147,7 @@ module RangeTools
     def addStat(stats,made,total)
         hand_label, hands = made[0],made[1]
         count = hands.kind_of?(Array) ? hands.length : 0
-        stats[hand_label] = count.to_f / total 
+        stats[hand_label] = total == 0 ? 0 : count.to_f / total 
     end
 
     def allTwoCardHashes(range)

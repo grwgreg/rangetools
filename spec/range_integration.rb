@@ -8,6 +8,7 @@ require './pair_evaluator.rb'
 require 'json'
 
 
+#all the moving pieces working together
 describe 'Range Tools' do
   before(:each) do
     @rangeManager = RangeTools::RangeManager.new
@@ -19,7 +20,7 @@ describe 'Range Tools' do
     ]
     @rangeEvaluator = RangeTools::RangeEvaluator.new(board)
   end
-  it 'rangeparser parses raneg and populates range object' do
+  it 'rangeparser parses range string and populates range object' do
     @rangeManager.range[:AK][:cc].should == false
     @rangeManager.range[:KJ][:cc].should == false
     @rangeManager.populateRange('AK, KJs, 99, QJ-6, T4-2s, 53o, 87-3o, 66-22')
@@ -45,13 +46,13 @@ describe 'Range Tools' do
     @rangeManager.range[:'44'][:cs].should == true
     @rangeManager.range[:'22'][:ds].should == true
   end
-  it 'blalba' do
+  it 'evaluateRange method will populate the madeHands hash with hand tags' do
 
     @rangeManager.populateRange('AK, KJs, 99, QJ-6, T4-2s, 53o, 87-3o, 66-22')
     @rangeEvaluator.evaluateRange(@rangeManager.range)
 
-   @rangeEvaluator.madeHands[:pocket_pair].should include('99cd')
-   @rangeEvaluator.madeHands[:pocket_pair].should_not include('99cc')
+    @rangeEvaluator.madeHands[:pocket_pair].should include('99cd')
+    @rangeEvaluator.madeHands[:pocket_pair].should_not include('99cc')
   end
 
   it 'A234 should be a gutshot' do
@@ -94,7 +95,7 @@ describe 'Range Tools' do
     rangeEvaluator.evaluateRange(rangeManager.range)
     rangeEvaluator.madeHands[:trips].length.should == 8
   end
-  it 'is fun' do
+  it 'evaluateRange properly fills madeHands for trips' do
     rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :A, rank: 14},
@@ -104,9 +105,9 @@ describe 'Range Tools' do
     rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('AK-T, AA-22, KQ-T, QJ-8, JT-8, T9-7, 98-6, 87-5, 76-5,65ss,65dd')
     rangeEvaluator.evaluateRange(rangeManager.range)
-    #rangeEvaluator.madeHands[:trips].length.should == 8
+    rangeEvaluator.madeHands[:trips].length.should == 18
   end
-  it 'fullhouses work' do
+  it 'evaluateRange properly fills madeHands for fullhouses' do
     rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :A, rank: 14},
@@ -116,9 +117,12 @@ describe 'Range Tools' do
     rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('AA')
     rangeEvaluator.evaluateRange(rangeManager.range)
-    #rangeEvaluator.madeHands[:trips].length.should == 8
+    rangeEvaluator.madeHands[:full_house].length.should == 6
   end
-  it 'straight on board' do#doing away with this functionailty for now
+  xit 'straight on board' do
+    #doing away with this functionailty for now, possibly bring back?
+    #problem is it gives all your junk hands this value
+    #but for this example, QJ is the nuts and Jx is a higher straight so need to account for this
     rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :c, tag: :T, rank: 10},
@@ -130,9 +134,9 @@ describe 'Range Tools' do
     rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('AKcs')
     rangeEvaluator.evaluateRange(rangeManager.range)
-#    rangeEvaluator.madeHands[:straight_on_board].should include('AKcs') 
+    #    rangeEvaluator.madeHands[:straight_on_board].should include('AKcs') 
   end
-  it 'flush draw  on board' do
+  it 'flush draw on board' do
     rangeManager = RangeTools::RangeManager.new
     board = [
       {suit: :d, tag: :T, rank: 10},
@@ -182,10 +186,8 @@ describe 'Range Tools' do
     rangeManager.populateRange('AK-Ts, AA-JJ, KQs, AK-Jo')
     rangeEvaluator.evaluateRange(rangeManager.range)
     x =  rangeEvaluator.rangeReport(rangeManager)
-    #x.keys.index(:oesd).should be_nil
     x[:straight_flush][:handRange].should == 'AJcc'
     x.keys.index(:oesd).should be_nil
-#puts x.to_json
   end
   it 'adds extra entries to madehands for combination hand types ie all draws' do
     rangeManager = RangeTools::RangeManager.new
@@ -202,16 +204,15 @@ describe 'Range Tools' do
     x =  rangeEvaluator.rangeReport(rangeManager)
     x[:overcards][:handRange].should == 'AKdd,AKhh,AKss,AQdd,AQhh,AQss,AK-Qo'
   end
-  it 'range report returns handrange' do
+  it 'range report returns handrange and percent' do
     rangeManager = RangeTools::RangeManager.new
     board = 'Kc,Qc,7s'
     rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('AK-2s, AA-TT, KQ, AK-To, QJ-Ts, JT-9s')
     rangeEvaluator.evaluateRange(rangeManager.range)
-    
     x =  rangeEvaluator.rangeReport(rangeManager)
-    x[:mid_pair][:hands].should == ["A7cc", "A7dd", "A7hh", "A7ss"]
-    x[:mid_pair][:handRange].should == "A7s"
+    x[:mid_pair][:hands].should == ["A7cc", "A7dd", "A7hh"]
+    x[:flush_draw][:percent].should == 0.0759493670886076
   end
   it 'range report includes percent of group' do
     rangeManager = RangeTools::RangeManager.new
@@ -219,9 +220,8 @@ describe 'Range Tools' do
     rangeEvaluator = RangeTools::RangeEvaluator.new(board)
     rangeManager.populateRange('AK-2s, AA-TT, KQ, AK-To, QJ-Ts, JT-9s')
     rangeEvaluator.evaluateRange(rangeManager.range)
-    
     x =  rangeEvaluator.rangeReport(rangeManager)
-    x[:oesd][:percent_of_group].should == 0.1
-puts x.to_json
+    x[:oesd][:percent_of_group].should == 0.08333333333333333
+
   end
 end

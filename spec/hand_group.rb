@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require '../hand_group.rb'
+require './hand_group.rb'
 
 
 describe 'Hand Group' do

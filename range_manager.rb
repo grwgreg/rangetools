@@ -142,8 +142,5 @@ module RangeTools
       hand[0] == hand[1]
     end
 
-
-
-
   end
 end

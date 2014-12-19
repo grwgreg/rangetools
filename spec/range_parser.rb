@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require '../range_parser.rb'
-require '../range_manager.rb'
+require './range_parser.rb'
+require './range_manager.rb'
 
 module RangeTools
   class RangeManager

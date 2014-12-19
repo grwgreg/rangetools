@@ -32,7 +32,8 @@ module RangeTools
       madeHands = markHands(drawHands, madeHands, twoCardHand)
       markHands(madePairHands, madeHands, twoCardHand)#ace high, overcards
     end
-        def bestMadeHand(flushStrength, straightStrength, madePairHands)
+
+    def bestMadeHand(flushStrength, straightStrength, madePairHands)
       if (flushStrength[:fullHand] == :flush && straightStrength[:fullHand] == :straight)
         :straight_flush
       elsif (madePairHands[:quads] || madePairHands[:full_house])

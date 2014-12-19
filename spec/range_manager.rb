@@ -8,7 +8,7 @@ describe 'RangeTools::RangeManager' do
   before(:each) do
     @rangeManager = RangeTools::RangeManager.new
   end
-  it 'has build range method called during init' do
+  it 'has build range method called during init ' do
     @rangeManager.range.length.should == 91
     @rangeManager.range[:"AK"].length.should == 16
     @rangeManager.range[:"AA"].length.should == 12
@@ -30,7 +30,7 @@ describe 'RangeTools::RangeManager' do
     @rangeManager.range[:QJ][:ds].should == false
   end
 
-  it 'has offset suited method' do
+  it 'has offset suit ed method' do
     @rangeManager.setOffSuited(:"Q8")
     @rangeManager.range[:Q8][:ss].should == false
     @rangeManager.range[:Q8][:sc].should == true
@@ -57,15 +57,6 @@ describe 'RangeTools::RangeManager' do
     @rangeManager.range[:AA][:cs].should == true
     @rangeManager.range[:K3][:cs].should == true
 
-=begin
-puts 'rangebefore'
-puts @rangeManager.range
-puts 'rangebefore'
-    @rangeManager.resetAll
-puts 'rangebafter'
-puts @rangeManager.range
-puts 'rangebeafter'
-=end
     @rangeManager.resetAll
     @rangeManager.range[:AA][:cs].should == false
     @rangeManager.range[:K3][:cs].should == false
@@ -75,10 +66,10 @@ puts 'rangebeafter'
 
   it 'has process tagbuckets method' do
     tagBuckets = {
-    single:  {AA: [:cs, :dc, :hs], KJ: [:ss, :hh]},
-    both:  [:KT, :"77", :QJ],
-    suited: [:"88", :"A4"],
-    offsuited: [:"43", :JT],
+      single:  {AA: [:cs, :dc, :hs], KJ: [:ss, :hh]},
+      both:  [:KT, :"77", :QJ],
+      suited: [:"88", :"A4"],
+      offsuited: [:"43", :JT],
     }
     @rangeManager.processTagBuckets(tagBuckets)
 
@@ -89,21 +80,17 @@ puts 'rangebeafter'
     @rangeManager.range[:"43"][:cc].should == false
     @rangeManager.range[:"43"][:cd].should == true
 
-=begin
-    puts '----'
-    puts @rangeManager.range.inspect
-    puts '----'
-=end
   end
 
   it 'has populate range method' do
     @rangeManager.range[:AK][:cc].should == false
     @rangeManager.populateRange('AK, 87')
     @rangeManager.range[:AK][:cc].should == true
-=begin
-    puts '----'
-    puts @rangeManager.range[:AK].inspect
-    puts '----'
-=end
+  end
+
+  it 'populate range will take empty string' do
+    @rangeManager.range[:AK][:cc].should == false
+    @rangeManager.populateRange('')
+    @rangeManager.range[:AK][:cc].should == false
   end
 end
